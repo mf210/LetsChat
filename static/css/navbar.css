@@ -1,0 +1,47 @@
+.chat-dropdown-header:hover{
+    cursor: pointer;
+    background: var(--main-background-color);
+}
+.chat-dropdown-header{
+    color: var(--light-primary-text-color);
+}
+.scrollable-menu {
+    height: auto;
+    max-height: 90vh;
+    width: 500px;
+    overflow-x: hidden;
+}
+
+.notifications-material-icon {
+    font-size: 28px;
+
+}
+.notifications-icon-container{
+    width: 40px;
+    height: 40px;
+    background-color: var(--main-background-color);
+}
+.notifications-icon-container:hover {
+    cursor: pointer;
+    background-color: var(--secondary-text-color)
+}
+.notify-badge{
+    position: absolute;
+    background: transparent;
+    height:1.2rem;
+    width:1.2rem;
+    line-height: 1.2rem;
+    top:1rem;
+    right:2rem;
+    text-align: center;
+    font-size: 1rem;
+    border-radius: 50%;
+    color:white;
+    font-weight: 630;
+    margin-top:-15px;
+    margin-right: -25px;
+}
+#id_notifications_spinner{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
