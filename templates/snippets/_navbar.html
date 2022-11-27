@@ -4,7 +4,7 @@
 
 	<!-- MEDIUM+ SCREENS -->
 	<div class="d-none d-md-flex flex-row my-auto flex-grow-1 align-items-center">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/">
             <img src="{% static 'images/letschat.svg' %}" width="40" height="40" alt="home" loading="lazy">
         </a>
 
@@ -37,18 +37,18 @@
 							</div>
 
 							<div class="btn-group dropleft">
-								<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{% static 'images/default_user.png' %}" alt="codingwithmitch logo" width="40" height="40">
+								<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.profile_image.url }}" alt="codingwithmitch logo" width="40" height="40">
 								<div class="dropdown-menu" aria-labelledby="id_profile_links">
 									<a class="dropdown-item" href="">Account</a>
-									<a class="dropdown-item" href="">Logout</a>
+									<a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a>
 								</div>
 							</div>
 						</div>
 						
 					</div>
 				{% else %}
-					<a class="btn btn-outline-light" href="">Login</a>
-					<a class="btn btn-outline-light" href="">Register</a>
+					<a class="btn btn-outline-light" href="{% url 'account_login' %}">Login</a>
+					<a class="btn btn-outline-light" href="{% url 'account_signup' %}">Register</a>
 				{% endif %}	
 			</nav>
 		</div>
@@ -58,7 +58,7 @@
 	<!-- SMALL SCREENS -->
 	<div class="d-flex d-md-none flex-column my-auto align-items-center">
 		<h5 class="font-weight-normal">
-		<a class="p-2 text-dark" href="">Home</a>
+		<a class="p-2 text-dark" href="/">Home</a>
 		</h5>
 		<form class="search-bar justify-content-start">
 			<input type="text" class="form-control" name="q" id="id_q_small" placeholder="Search...">
@@ -69,7 +69,7 @@
 				<div class="dropdown dropleft p-2 mt-2">
 					<div class="d-flex flex-row">
 						<div class="btn-group dropleft">
-							<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{% static 'images/default_user.png' %}" alt="codingwithmitch logo" width="40" height="40">
+							<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.profile_image.url }}" alt="codingwithmitch logo" width="40" height="40">
 							<div class="dropdown-menu" aria-labelledby="id_profile_links">
 								<a class="dropdown-item" href="">Account</a>
 							</div>
@@ -77,8 +77,8 @@
 					</div>
 				</div>
 				{% else %}
-					<a class="btn btn-success m-2" href="">Login</a>
-					<a class="btn btn-success m-2" href="">Register</a>
+					<a class="btn btn-success m-2" href="{% url 'account_login' %}">Login</a>
+					<a class="btn btn-success m-2" href="{% url 'account_signup' %}">Register</a>
 				{% endif %}	
 			</nav>
 	  	</div>
