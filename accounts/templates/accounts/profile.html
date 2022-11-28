@@ -1,0 +1,46 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block head %}
+	<link rel="stylesheet" href="{% static 'css/accounts/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+	<div class="container-fluid">
+		<div class="d-flex flex-row justify-content-center flex-wrap align-items-start">
+
+			<div class="card profile-card m-2">
+			<div class="card-body">
+				<div class="d-flex flex-column justify-content-center p-4">
+					<div class="image-container mx-auto mb-4">
+						<img class="d-block border border-dark rounded-circle img-fluid mx-auto profile-image" alt="codingwithmitch logo" id="id_profile_image" src="{{ user.profile_image.url }}">
+					</div>
+					<p class="mt-4 mb-1 field-heading">Email</p>
+					{%  if user.username == view.kwargs.username %}
+						<h5>{{ user.email }}</h5>
+					{% else %}
+						{% if user.hide_email %}
+							<h5>**********</h5>
+						{% else %}
+							<h5>{{ user.email }}</h5>
+						{% endif %}
+					{% endif %}
+					<p class="mt-4 mb-1 field-heading">Username</p>
+					<h5>{{ user.username }}</h5>
+
+					<!-- If Auth user is viewing their own profile -->
+					{% if user.username == view.kwargs.username %}
+					<a  class="mt-4 btn btn-primary" href="#">Update</a>
+					<div class="d-flex flex-column mt-4">
+						<a class="m-auto" href="{% url 'account_change_password' %}">Change password</a>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+			</div>
+
+		</div>
+	</div>
+{% endblock content %}
+
+
