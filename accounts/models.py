@@ -19,3 +19,6 @@ class User(AbstractUser):
         default=get_default_image_path
     )
     hide_email = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-id']
