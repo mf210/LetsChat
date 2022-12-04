@@ -175,6 +175,9 @@ AUTHENTICATION_BACKENDS = [
 
 SITE_ID = 1
 
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+
 # django-crispy-forms
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
