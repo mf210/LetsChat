@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.urls import reverse
 
 
 def user_directory_path(instance, filename):
@@ -22,3 +22,6 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ['-id']
+
+    def get_absolute_url(self):
+        return reverse('accounts:profile', kwargs={'username': self.username})

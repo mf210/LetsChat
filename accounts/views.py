@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
-from django.views.generic import View
+from django.views.generic import View, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 
@@ -29,3 +29,12 @@ class SearchAccountView(LoginRequiredMixin, View):
             'page_range': paginator.get_elided_page_range(page_obj.number),
         }
         return render(request, 'accounts/search_results.html', context)
+
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    """Update user's profile"""
+    fields = ['username', 'profile_image', 'hide_email']
+    template_name = 'accounts/edit_profile.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user
