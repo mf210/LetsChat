@@ -8,7 +8,7 @@
             <img src="{% static 'images/letschat.svg' %}" width="40" height="40" alt="home" loading="lazy">
         </a>
 
-		<form class="search-bar justify-content-start">
+		<form class="search-bar justify-content-start" action="{% url 'accounts:search' %}">
 			<input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search...">
 		</form>
 
@@ -60,7 +60,7 @@
 		<h5 class="font-weight-normal">
 		<a class="p-2 text-dark" href="/">Home</a>
 		</h5>
-		<form class="search-bar justify-content-start">
+		<form class="search-bar justify-content-start" action="{% url 'accounts:search' %}">
 			<input type="text" class="form-control" name="q" id="id_q_small" placeholder="Search...">
 		</form>
 		<div class="d-flex flex-row-reverse flex-grow-1">
