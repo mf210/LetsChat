@@ -14,7 +14,7 @@ class User(AbstractUser):
     profile_image = models.ImageField(
         max_length=255,
         null=True,
-        blank=True,
+        blank=False,
         upload_to=user_directory_path,
         default=get_default_image_path
     )
@@ -22,6 +22,16 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ['-id']
+
+    
+    def save(self, *args, **kwargs) -> None:
+        if self.pk:
+            # Delete old profile image before save the new one
+            profile_image = User.objects.get(pk=self.pk).profile_image
+            if profile_image.name != get_default_image_path():
+                profile_image.delete(save=False)
+        return super().save(*args, **kwargs)
+
 
     def get_absolute_url(self):
         return reverse('accounts:profile', kwargs={'username': self.username})
