@@ -16,7 +16,7 @@
                     
                     <form class="form-signin" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="file" name="{{ form.profile_image.name }}" id="profile_image_input">
+                        <input type="file" accept="image/*" name="{{ form.profile_image.name }}" id="profile_image_input">
                         <h6 class="mt-4 field-heading">Email</h6>
                         <input type="email" name="email" id="id_input_email" class="form-control" placeholder="Email address" disabled value={{ user.email }} >
                         <h6 class="mt-4 field-heading">Username</h6>
