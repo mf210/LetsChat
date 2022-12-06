@@ -12,9 +12,7 @@
 			<div class="card profile-card m-2">
 			<div class="card-body">
 				<div class="d-flex flex-column justify-content-center p-4">
-					<div class="image-container mx-auto mb-4">
-						<img class="d-block border border-dark rounded-circle img-fluid mx-auto profile-image" alt="codingwithmitch logo" id="id_profile_image" src="{{ user_object.profile_image.url }}">
-					</div>
+					<img class="d-block border border-dark rounded-circle" alt="profile image" src="{{ user_object.profile_image.url }}" width="300" height="300">
 					<p class="mt-4 mb-1 field-heading">Email</p>
 					{%  if user.username == user_object.username %}
 						<h5>{{ user.email }}</h5>

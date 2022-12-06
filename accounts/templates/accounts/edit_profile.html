@@ -12,8 +12,7 @@
             <div class="card profile-card">
             <div class="card-body">
                 <div class="d-flex flex-column justify-content-center p-4">
-                    <img id="selected_profile_image" src="{{ user.profile_image.url }}" class="rounded-circle" alt="profile image" width="300" height="300">
-                    
+                    <img id="selected_profile_image" src="{{ user.profile_image.url }}" class="d-block border border-dark rounded-circle" alt="profile image" width="300" height="300">
                     <form class="form-signin" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <input type="file" accept="image/*" name="{{ form.profile_image.name }}" id="profile_image_input">
