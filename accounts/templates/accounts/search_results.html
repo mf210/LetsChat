@@ -15,7 +15,7 @@
 		<div class="card flex-row flex-grow-1 p-2 mx-2 my-2 align-items-center">
 			<a class="profile-link" href="{% url 'accounts:profile' username=account.username %}">
 				<div class="card-image m-2">
-					<img class="img-fluid profile-image" src="{{ account.profile_image.url }}" alt="">
+					<img class="rounded-circle profile-image" width="80" height="80" src="{{ account.profile_image.url }}" alt="">
 				</div>
 			</a>
 			<a class="profile-link" href="{% url 'accounts:profile' username=account.username %}">
