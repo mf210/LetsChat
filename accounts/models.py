@@ -28,7 +28,7 @@ class User(AbstractUser):
         if self.pk:
             # Delete old profile image before save the new one
             profile_image = User.objects.get(pk=self.pk).profile_image
-            if profile_image.name != get_default_image_path():
+            if self.profile_image.name != profile_image.name != get_default_image_path():
                 profile_image.delete(save=False)
         return super().save(*args, **kwargs)
 
