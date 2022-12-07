@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # Local
     'accounts',
     'home',
+    'friendships',
     # Third-party
     'allauth',
     'allauth.account',
