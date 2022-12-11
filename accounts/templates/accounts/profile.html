@@ -37,8 +37,27 @@
 			</div>
 			</div>
 
+
+			<div class="d-flex flex-column mb-4">
+				<!-- THEM to YOU -->
+				{% if friend_req_obj %}
+				<div class="card m-2 p-4">
+					<div class="d-flex flex-row align-items-center">
+						<span class="friend-text align-items-center mr-2">Accept Friend Request</span>
+						<span class="decline-friend-request material-icons p-1" onclick='triggerDeclineFriendRequest("{{ friend_req_obj.id }}")'>cancel</span>
+						<span class="confirm-friend-request material-icons p-1" onclick='triggerAcceptFriendRequest("{{ friend_req_obj.id }}")'>check</span>
+					</div>
+				</div>
+				{% endif %}
+	
+			</div>
+
 		</div>
 	</div>
 {% endblock content %}
+
+{% block scripts %}
+    <script src="{% static 'js/accounts/profile.js' %}"></script>
+{% endblock %}
 
 

@@ -5,13 +5,24 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 
 
+from friendships.models import FriendRequest
+
 
 
 class ProfileView(LoginRequiredMixin, View):
     """Details of each accounts"""
     def get(self, request, *args, **kwargs):
         user = get_object_or_404(get_user_model(), username=kwargs.get('username'))
-        return render(request, 'accounts/profile.html', context={'user_object': user})
+        try:
+            friend_req_obj = FriendRequest.objects.get(sender=user, receiver=request.user, is_active=True)
+        except FriendRequest.DoesNotExist:
+            friend_req_obj = False
+        
+        context={
+            'user_object': user,
+            'friend_req_obj': friend_req_obj,
+        }
+        return render(request, 'accounts/profile.html', context)
 
 
 class SearchAccountView(LoginRequiredMixin, View):
