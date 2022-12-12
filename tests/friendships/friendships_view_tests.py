@@ -33,8 +33,8 @@ def test_receiver_can_accept_friend_request(client: Client, django_user_model):
     user1, user2 = test_users['user1'], test_users['user2']
     friend_req_obj = FriendRequest.objects.create(sender=user1, receiver=user2)
     client.force_login(user2)
-    url = reverse('friendships:accept_friend', kwargs={'pk': friend_req_obj.pk})
-    response = client.post(url)
+    url = reverse('friendships:handle-friend-request', kwargs={'pk': friend_req_obj.pk})
+    response = client.post(url, data={'accept': 'true'})
     assert response.status_code == HTTPStatus.OK
     assert user1.friendship.is_friend_with(user2)
 
@@ -45,8 +45,32 @@ def test_only_receiver_can_accept_friend_request(client: Client, django_user_mod
     user1, user2 = test_users['user1'], test_users['user2']
     friend_req_obj = FriendRequest.objects.create(sender=user1, receiver=user2)
     client.force_login(user1)
-    url = reverse('friendships:accept_friend', kwargs={'pk': friend_req_obj.pk})
-    response = client.post(url)
+    url = reverse('friendships:handle-friend-request', kwargs={'pk': friend_req_obj.pk})
+    response = client.post(url, data={'accept': 'true'})
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert not user1.friendship.is_friend_with(user2)
+
+
+def test_receiver_can_decline_friend_request(client: Client, django_user_model):
+    """receiver can decline the friend request"""
+    test_users = create_users(django_user_model)
+    user1, user2 = test_users['user1'], test_users['user2']
+    friend_req_obj = FriendRequest.objects.create(sender=user1, receiver=user2)
+    client.force_login(user2)
+    url = reverse('friendships:handle-friend-request', kwargs={'pk': friend_req_obj.pk})
+    response = client.post(url, data={'accept': 'false'})
+    assert response.status_code == HTTPStatus.OK
+    assert not user1.friendship.is_friend_with(user2)
+
+
+def test_only_receiver_can_decline_friend_request(client: Client, django_user_model):
+    """Only the receiver can decline the friend request"""
+    test_users = create_users(django_user_model)
+    user1, user2 = test_users['user1'], test_users['user2']
+    friend_req_obj = FriendRequest.objects.create(sender=user1, receiver=user2)
+    client.force_login(user1)
+    url = reverse('friendships:handle-friend-request', kwargs={'pk': friend_req_obj.pk})
+    response = client.post(url, data={'accept': 'false'})
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert not user1.friendship.is_friend_with(user2)
 
