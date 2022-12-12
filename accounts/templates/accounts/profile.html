@@ -49,12 +49,12 @@
 					</div>
 				</div>
 				{% endif %}
-				
+
 				<div class="card m-2 px-4 pb-4">
 					<!-- Cancel Friend Request / Send Friend Request / Remove Friend -->
 					{% if not is_friend and user != user_object %}
 						<!-- You sent them a request -->
-						{% if sent_friend_request %}
+						{% if sent_friend_req %}
 							<div class="d-flex flex-column align-items-center pt-4">
 								<button class="btn btn-danger" id="id_cancel_friend_request_btn">
 									Cancel Friend Request
@@ -62,7 +62,7 @@
 							</div>
 						{% else %}
 							<div class="d-flex flex-column align-items-center pt-4">
-								<button class="btn btn-primary" id="id_send_friend_request_btn">
+								<button class="btn btn-primary" onclick="sendFriendRequest(`{% url 'friendships:send-friend-request' %}`, `{{ user_object }}`)">
 									Send Friend Request
 								</button>
 							</div>

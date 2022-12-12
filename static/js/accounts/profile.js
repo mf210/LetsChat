@@ -23,3 +23,18 @@ function triggerHandleFriendRequest(url, accept){
         console.error('Error:', error);
     });
 }
+
+function sendFriendRequest(url, receiver){
+    let data = new FormData();
+    data.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+    data.append('receiver_username', receiver);
+    fetch(url, {method: 'POST', body: data})
+        .then((response) => response.text())
+        .then((value) => {
+            console.log(value);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    location.reload();
+}
