@@ -43,7 +43,7 @@ class FriendRequest(models.Model):
         2. RECIVER
             - Person receiving the friend friend
     """
-    sender = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE, related_name='sended_friend_reqs')
+    sender = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE, related_name='sent_friend_reqs')
     receiver = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE, related_name='received_friend_reqs')
     is_active = models.BooleanField(default=True)
     creation_time = models.DateTimeField(auto_now_add=True)
