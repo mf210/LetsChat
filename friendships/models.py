@@ -67,6 +67,7 @@ class FriendRequest(models.Model):
         Is it "declined" by setting the `is_active` field to False
         """
         self.is_active = False
+        self.save()
 
     def cancel(self):
         """
@@ -75,3 +76,4 @@ class FriendRequest(models.Model):
         This is only different with respect to "declining" through the notification that is generated.
         """
         self.is_active = False
+        self.save()
