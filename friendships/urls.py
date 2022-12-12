@@ -7,5 +7,5 @@ from . import views
 app_name = 'friendships'
 
 urlpatterns = [
-    path('accept_friend_request/<int:pk>/', views.AcceptFriendRequestView.as_view(), name='accept_friend')
+    path('handle_friend_request/<int:pk>/', views.HandleFriendRequestView.as_view(), name='handle-friend-request')
 ]

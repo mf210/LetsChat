@@ -5,11 +5,11 @@ function getCookie(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
   }
 
-function triggerAcceptFriendRequest(friend_req_obj_id){
-    console.log(`Accept... ${friend_req_obj_id}`);
+function triggerHandleFriendRequest(url, accept){
     let data = new FormData();
     data.append('csrfmiddlewaretoken', getCookie('csrftoken'));
-    fetch(`/friendships/accept_friend_request/${friend_req_obj_id}/`, 
+    data.append('accept', accept);
+    fetch(url, 
         {
             method: 'POST',
             body: data
@@ -22,8 +22,4 @@ function triggerAcceptFriendRequest(friend_req_obj_id){
     .catch((error) => {
         console.error('Error:', error);
     });
-}
-
-function triggerDeclineFriendRequest(friend_req_obj_id){
-    console.log(`Decline... ${friend_req_obj_id}`);
 }

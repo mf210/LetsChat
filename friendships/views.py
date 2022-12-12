@@ -7,8 +7,15 @@ from .models import FriendRequest
 
 
 
-class AcceptFriendRequestView(LoginRequiredMixin, View):
+class HandleFriendRequestView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         friend_req_obj = get_object_or_404(FriendRequest, id=kwargs.get('pk'), receiver=request.user)
-        friend_req_obj.accept()
-        return HttpResponse(b"Friend request accepted!")
+        accept = True if request.POST.get('accept') == 'true' else False
+        if accept:
+            friend_req_obj.accept()
+            message = 'Friend request accepted!'
+        else:
+            friend_req_obj.decline()
+            message = 'Friend request declined!'
+
+        return HttpResponse(message)
