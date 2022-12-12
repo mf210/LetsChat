@@ -14,7 +14,7 @@
 				<div class="d-flex flex-column justify-content-center p-4">
 					<img class="d-block border border-dark rounded-circle" alt="profile image" src="{{ user_object.profile_image.url }}" width="300" height="300">
 					<p class="mt-4 mb-1 field-heading">Email</p>
-					{%  if user.username == user_object.username %}
+					{%  if user == user_object %}
 						<h5>{{ user.email }}</h5>
 					{% else %}
 						{% if user_object.hide_email %}
@@ -40,15 +40,54 @@
 
 			<div class="d-flex flex-column mb-4">
 				<!-- THEM to YOU -->
-				{% if friend_req_obj %}
+				{% if received_friend_req %}
 				<div class="card m-2 p-4">
 					<div class="d-flex flex-row align-items-center">
 						<span class="friend-text align-items-center mr-2">Accept Friend Request</span>
-						<span class="decline-friend-request material-icons p-1" onclick="triggerHandleFriendRequest(`{% url 'friendships:handle-friend-request' friend_req_obj.id %}`, false)">cancel</span>
-						<span class="confirm-friend-request material-icons p-1" onclick="triggerHandleFriendRequest(`{% url 'friendships:handle-friend-request' friend_req_obj.id %}`, true)">check</span>
+						<span class="decline-friend-request material-icons p-1" onclick="triggerHandleFriendRequest(`{% url 'friendships:handle-friend-request' received_friend_req.id %}`, false)">cancel</span>
+						<span class="confirm-friend-request material-icons p-1" onclick="triggerHandleFriendRequest(`{% url 'friendships:handle-friend-request' received_friend_req.id %}`, true)">check</span>
 					</div>
 				</div>
 				{% endif %}
+				
+				<div class="card m-2 px-4 pb-4">
+					<!-- Cancel Friend Request / Send Friend Request / Remove Friend -->
+					{% if not is_friend and user != user_object %}
+						<!-- You sent them a request -->
+						{% if sent_friend_request %}
+							<div class="d-flex flex-column align-items-center pt-4">
+								<button class="btn btn-danger" id="id_cancel_friend_request_btn">
+									Cancel Friend Request
+								</button>
+							</div>
+						{% else %}
+							<div class="d-flex flex-column align-items-center pt-4">
+								<button class="btn btn-primary" id="id_send_friend_request_btn">
+									Send Friend Request
+								</button>
+							</div>
+						{% endif %}
+					{% endif %}
+
+					{% if is_friend %}
+						<div class="dropdown pt-4 m-auto">
+							<button class="btn btn-secondary dropdown-toggle friends-btn" type="button" id="id_friends_toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Friends
+							</button>
+							<div class="dropdown-menu" aria-labelledby="id_friends_toggle">
+								<a class="dropdown-item" href="#">Unfriend</a>
+							</div>
+						</div>
+                	{% endif %}
+					<!-- Friend list link -->
+					<div class="d-flex flex-column pt-4">
+						<a href="#">
+							<div class="d-flex flex-row align-items-center justify-content-center icon-container">
+								<span class="material-icons mr-2 friends-icon">contact_page</span><span class="friend-text">Friends ({{ user_object.friendship.friends.count }})</span>
+							</div>
+						</a>
+					</div>
+				</div>
 	
 			</div>
 

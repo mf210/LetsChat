@@ -14,13 +14,18 @@ class ProfileView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         user = get_object_or_404(get_user_model(), username=kwargs.get('username'))
         try:
-            friend_req_obj = FriendRequest.objects.get(sender=user, receiver=request.user, is_active=True)
+            received_friend_req = FriendRequest.objects.get(sender=user, receiver=request.user, is_active=True)
         except FriendRequest.DoesNotExist:
-            friend_req_obj = False
-        
+            received_friend_req = False
+        try:
+            sent_friend_req = FriendRequest.objects.get(sender=request.user, receiver=user, is_active=True)
+        except FriendRequest.DoesNotExist:
+            sent_friend_req = False
         context={
             'user_object': user,
-            'friend_req_obj': friend_req_obj,
+            'received_friend_req': received_friend_req,
+            'sent_friend_req': sent_friend_req,
+            'is_friend': request.user.friendship.is_friend_with(user)
         }
         return render(request, 'accounts/profile.html', context)
 
