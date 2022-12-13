@@ -112,4 +112,4 @@ class FriendRequestModelTests:
         """Cancel a friend request"""
         friendreq_obj = self.create_friendreq_obj()
         friendreq_obj.cancel()
-        assert not friendreq_obj.is_active
+        assert not FriendRequest.objects.filter(pk=friendreq_obj.pk).exists()

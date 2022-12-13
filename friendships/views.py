@@ -20,8 +20,8 @@ class HandleFriendRequestView(LoginRequiredMixin, View):
             friend_req_obj.accept()
             message = 'Friend request accepted!'
         else:
-            friend_req_obj.decline()
-            message = 'Friend request declined!'
+            friend_req_obj.cancel()
+            message = 'Friend request Cancelled!'
 
         return HttpResponse(message)
 

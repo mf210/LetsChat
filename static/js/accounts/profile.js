@@ -17,7 +17,7 @@ function triggerHandleFriendRequest(url, accept){
     )
     .then((response) => response.text())
     .then((data) => {
-        console.log('Success:', data);
+        location.reload();
     })
     .catch((error) => {
         console.error('Error:', error);
@@ -31,10 +31,9 @@ function sendFriendRequest(url, receiver){
     fetch(url, {method: 'POST', body: data})
         .then((response) => response.text())
         .then((value) => {
-            console.log(value);
+            location.reload();
         })
         .catch((error) => {
             console.error(error);
         });
-    location.reload();
 }

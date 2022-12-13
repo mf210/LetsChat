@@ -75,5 +75,4 @@ class FriendRequest(models.Model):
         Is it "cancelled" by setting the `is_active` field to False.
         This is only different with respect to "declining" through the notification that is generated.
         """
-        self.is_active = False
-        self.save()
+        self.delete()
