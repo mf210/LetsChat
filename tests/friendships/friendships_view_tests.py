@@ -81,7 +81,7 @@ def test_send_friend_request(client: Client, django_user_model):
     user1, user2 = test_users['user1'], test_users['user2']
     client.force_login(user1)
     url = reverse('friendships:send-friend-request')
-    response = client.post(url, data={'receiver_username': user2.username})
+    response = client.post(url, data={'receiver_id': user2.id})
     assert response.status_code == HTTPStatus.OK
 
 
@@ -92,7 +92,7 @@ def test_send_friend_request_twice_make_conflict(client: Client, django_user_mod
     client.force_login(user1)
     url = reverse('friendships:send-friend-request')
     for _ in range(2):
-        response = client.post(url, data={'receiver_username': user2.username})
+        response = client.post(url, data={'receiver_id': user2.id})
     assert response.status_code == HTTPStatus.CONFLICT
 
 
@@ -102,5 +102,5 @@ def test_send_friend_request_to_dummy_user(client: Client, django_user_model):
     user1= test_users['user1']
     client.force_login(user1)
     url = reverse('friendships:send-friend-request')
-    response = client.post(url, data={'receiver_username': 'dummy_user'})
+    response = client.post(url, data={'receiver_id': 33})
     assert response.status_code == HTTPStatus.NOT_FOUND

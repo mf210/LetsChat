@@ -27,7 +27,7 @@ function triggerHandleFriendRequest(url, accept){
 function sendFriendRequest(url, receiver){
     let data = new FormData();
     data.append('csrfmiddlewaretoken', getCookie('csrftoken'));
-    data.append('receiver_username', receiver);
+    data.append('receiver_id', receiver);
     fetch(url, {method: 'POST', body: data})
         .then((response) => response.text())
         .then((value) => {

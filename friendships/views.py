@@ -29,10 +29,10 @@ class HandleFriendRequestView(LoginRequiredMixin, View):
 class SendFriendRequestView(LoginRequiredMixin, View):
     """Send friend request"""
     def post(self, request, *args, **kwargs):
-        receiver_username = request.POST.get('receiver_username')
+        receiver_id = request.POST.get('receiver_id')
         receiver = get_object_or_404(
             USER_MODEL.objects.exclude(pk=request.user.pk),
-            username=receiver_username
+            id=receiver_id
         )
         if FriendRequest.objects.filter(sender=request.user, receiver=receiver).exists():
             status = HTTPStatus.CONFLICT

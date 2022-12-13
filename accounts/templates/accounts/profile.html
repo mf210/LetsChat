@@ -62,7 +62,7 @@
 							</div>
 						{% else %}
 							<div class="d-flex flex-column align-items-center pt-4">
-								<button class="btn btn-primary" onclick="sendFriendRequest(`{% url 'friendships:send-friend-request' %}`, `{{ user_object }}`)">
+								<button class="btn btn-primary" onclick="sendFriendRequest(`{% url 'friendships:send-friend-request' %}`, `{{ user_object.id }}`)">
 									Send Friend Request
 								</button>
 							</div>
