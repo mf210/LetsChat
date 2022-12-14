@@ -45,3 +45,15 @@ class SendFriendRequestView(LoginRequiredMixin, View):
         return HttpResponse(message, status=status)
 
 
+class cancelFriendRequestView(LoginRequiredMixin, View):
+    """Cancel the friend request"""
+    def post(self, request, *args, **kwargs):
+        friend_req_pk = request.POST.get('pk')
+        friend_req_obj = get_object_or_404(
+            request.user.sent_friend_reqs,
+            pk=friend_req_pk
+        )
+        friend_req_obj.cancel()
+        return HttpResponse('Request cancelled successfully!')
+
+

@@ -104,3 +104,19 @@ def test_send_friend_request_to_dummy_user(client: Client, django_user_model):
     url = reverse('friendships:send-friend-request')
     response = client.post(url, data={'receiver_id': 33})
     assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_only_sender_can_cancel_friend_request(client: Client, django_user_model):
+    """Only the sender of friend requests can cancel them"""
+    test_users = create_users(django_user_model)
+    user1, user2 = test_users['user1'], test_users['user2']
+    user1_friend_request = FriendRequest.objects.create(sender=user1, receiver=user2)
+    user2_friend_request = FriendRequest.objects.create(sender=user2, receiver=user1)
+    client.force_login(user1)
+    url = reverse('friendships:cancel-friend-request')
+    response_1 = client.post(url, data={'pk': user1_friend_request.pk})
+    response_2 = client.post(url, data={'pk': user2_friend_request.pk})
+    assert response_1.status_code == HTTPStatus.OK
+    assert not FriendRequest.objects.filter(pk=user1_friend_request.pk).exists()
+    assert response_2.status_code == HTTPStatus.NOT_FOUND
+    assert FriendRequest.objects.filter(pk=user2_friend_request.pk).exists()

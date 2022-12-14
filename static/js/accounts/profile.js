@@ -37,3 +37,17 @@ function sendFriendRequest(url, receiver){
             console.error(error);
         });
 }
+
+function cancelFriendRequest(url, pk){
+    let data = new FormData();
+    data.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+    data.append('pk', pk);
+    fetch(url, {method: 'POST', body: data})
+        .then((response) => response.text())
+        .then((value) => {
+            location.reload();
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+}

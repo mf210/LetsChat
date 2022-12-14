@@ -56,7 +56,7 @@
 						<!-- You sent them a request -->
 						{% if sent_friend_req %}
 							<div class="d-flex flex-column align-items-center pt-4">
-								<button class="btn btn-danger" id="id_cancel_friend_request_btn">
+								<button class="btn btn-danger" onclick="cancelFriendRequest(`{% url 'friendships:cancel-friend-request' %}`, `{{ sent_friend_req.pk }}`)">
 									Cancel Friend Request
 								</button>
 							</div>
