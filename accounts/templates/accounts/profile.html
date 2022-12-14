@@ -75,7 +75,7 @@
 							Friends
 							</button>
 							<div class="dropdown-menu" aria-labelledby="id_friends_toggle">
-								<a class="dropdown-item" href="#">Unfriend</a>
+								<a class="dropdown-item" onclick="unfriend(`{% url 'friendships:unfriend' %}`, `{{ user_object.pk }}`)">Unfriend</a>
 							</div>
 						</div>
                 	{% endif %}

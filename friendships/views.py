@@ -57,3 +57,13 @@ class CancelFriendRequestView(LoginRequiredMixin, View):
         return HttpResponse('Request cancelled successfully!')
 
 
+class UnfriendView(LoginRequiredMixin, View):
+    """Remove some user from a list of friends"""
+    def post(self, request, *args, **kwargs):
+        user = get_object_or_404(
+            request.user.friends,
+            user_id=request.POST.get('pk')
+        ).user
+        request.user.friendship.unfriend(user)
+        return HttpResponse(f'{user} removed from your friends list')
+

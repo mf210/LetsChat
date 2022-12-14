@@ -20,9 +20,15 @@ def create_users(django_user_model):
         email='usertwo@gmail.com',
         password='password'
     )
+    user3 = django_user_model.objects.create_user(
+        username='user-three',
+        email='userthree@gmail.com',
+        password='password'
+    )
     return {
         'user1': user1,
-        'user2': user2
+        'user2': user2,
+        'user3': user3
     }
 
 
@@ -120,3 +126,19 @@ def test_only_sender_can_cancel_friend_request(client: Client, django_user_model
     assert not FriendRequest.objects.filter(pk=user1_friend_request.pk).exists()
     assert response_2.status_code == HTTPStatus.NOT_FOUND
     assert FriendRequest.objects.filter(pk=user2_friend_request.pk).exists()
+
+
+def test_only_related_friends_can_unfriend_their_friendship(client: Client, django_user_model):
+    test_users = create_users(django_user_model)
+    user1, user2, user3 = test_users['user1'], test_users['user2'], test_users['user3']
+    user1.friendship.add_friend(user2)
+    user2.friendship.add_friend(user1)
+    client.force_login(user3)
+    url = reverse('friendships:unfriend')
+    response = client.post(url, data={'pk': user2.pk})
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert user1.friendship.is_friend_with(user2)
+    client.force_login(user1)
+    response = client.post(url, data={'pk': user2.pk})
+    assert response.status_code == HTTPStatus.OK
+    assert not user1.friendship.is_friend_with(user2)
