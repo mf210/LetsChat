@@ -15,8 +15,7 @@ class Friendship(models.Model):
 
     def add_friend(self, user):
         """Add a new friend"""
-        if not self.friends.filter(pk=user.pk).exists():
-            self.friends.add(user)
+        self.friends.add(user)
 
     def is_friend_with(self, user):
         """Check friendship between self and passed user"""
@@ -24,8 +23,7 @@ class Friendship(models.Model):
 
     def remove_friend(self, user):
         """Remove a friend"""
-        if self.friends.filter(pk=user.pk).exists():
-            self.friends.remove(user)
+        self.friends.remove(user)
 
     def unfriend(self, user):
         """
