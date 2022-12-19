@@ -1,0 +1,82 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/friendships/friend_list.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="card p-2">
+
+            {% if page_obj %}
+            <div class="d-flex flex-row flex-wrap">
+            {% for account in page_obj %}
+                <div class="card flex-row flex-grow-1 p-2 mx-2 my-2 align-items-center">
+                    <a class="profile-link" href="{% url 'accounts:profile' username=account.username %}">
+                        <div class="card-image m-2">
+                            <img class="rounded-circle profile-image" width="80" height="80" src="{{ account.profile_image.url }}" alt="">
+                        </div>
+                    </a>
+                    <a class="profile-link" href="{% url 'accounts:profile' username=account.username %}">
+                        <div class="card-center px-2">
+                            <h4 class="card-title">{{ account.username }}</h4>
+                            <p class="card-text"><a href="#">Send a Message</a></p>
+                        </div>
+                    </a>
+                    <div class="d-flex flex-row card-right flex-grow-1 justify-content-end mx-2">
+                        
+                            <div class="d-flex flex-row friends-text-container p-3">
+                                <p class="friends-text m-auto">
+                                    Friends 
+                                </p>
+                                <span class="material-icons checkmark-icon m-auto pl-2">
+                                check_circle_outline
+                                </span>
+                            </div>
+                        
+                            
+                            <div class="d-flex flex-row friends-text-container p-3">
+                                <p class="friends-text m-auto">
+                                    Not Friends 
+                                </p>
+                                <span class="material-icons cancel-icon m-auto pl-2">cancel</span>
+                            </div>
+                        
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:2 %}
+                    </div><div class="d-flex flex-row flex-wrap">
+                {% endif %}
+            {% endfor %}
+            
+            {% else %} <!-- If no friends -->
+            <div class="d-flex flex-row flex-grow-1 justify-content-center align-items-center p-4">
+                <p>No results</p>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <br>
+    <!-- pagination -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}">Previous</a>
+        </li>
+        {% endif %}
+        {% for num in page_range %}
+        <li class="page-item {% if page_obj.number == num %}active{% endif %}"><a class="page-link" href="?page={{ num }}&q={{ request.GET.q }}">{{ num }}</a></li>
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}">Next</a>
+        </li>
+        {% endif %}
+        </ul>
+    </nav>
+{% endblock content %}

@@ -81,7 +81,7 @@
                 	{% endif %}
 					<!-- Friend list link -->
 					<div class="d-flex flex-column pt-4">
-						<a href="#">
+						<a href="{% url 'friendships:friend_list' username=user_object.username %}">
 							<div class="d-flex flex-row align-items-center justify-content-center icon-container">
 								<span class="material-icons mr-2 friends-icon">contact_page</span><span class="friend-text">Friends ({{ user_object.friendship.friends.count }})</span>
 							</div>

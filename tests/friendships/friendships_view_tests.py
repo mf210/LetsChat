@@ -142,3 +142,17 @@ def test_only_related_friends_can_unfriend_their_friendship(client: Client, djan
     response = client.post(url, data={'pk': user2.pk})
     assert response.status_code == HTTPStatus.OK
     assert not user1.friendship.is_friend_with(user2)
+
+
+def test_user_friend_list_view(client: Client, django_user_model):
+    """Test FriendListView"""
+    test_users = create_users(django_user_model)
+    user1, user2, user3 = test_users['user1'], test_users['user2'], test_users['user3']
+    user1.friendship.add_friend(user2)
+    user1.friendship.add_friend(user3)
+    client.force_login(user2)
+    url = reverse('friendships:friend_list', kwargs={'username': user1.username})
+    response = client.get(url)
+    assert response.status_code == HTTPStatus.OK
+    assert response.context['page_obj'][0] == user3
+    assert response.context['page_obj'][1] == user2

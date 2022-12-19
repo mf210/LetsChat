@@ -1,9 +1,10 @@
 from http import HTTPStatus
 
-from django.shortcuts import get_object_or_404, HttpResponse
+from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
+from django.core.paginator import Paginator
 
 from .models import FriendRequest
 
@@ -67,3 +68,18 @@ class UnfriendView(LoginRequiredMixin, View):
         request.user.friendship.unfriend(user)
         return HttpResponse(f'{user} removed from your friends list')
 
+
+class FriendListView(LoginRequiredMixin, View):
+    """List user's friends"""
+    def get(self, request, *args, **kwargs):
+        user = get_object_or_404(get_user_model(), username=kwargs.get('username'))
+        friends = user.friendship.friends.all()
+        # pagination
+        page_num = request.GET.get('page')
+        paginator = Paginator(friends, per_page=10)
+        page_obj = paginator.get_page(page_num)
+        context = {
+            'page_obj': page_obj,
+            'page_range': paginator.get_elided_page_range(page_obj.number),
+        }
+        return render(request, 'friendships/friend_list.html', context)
