@@ -129,6 +129,7 @@ def test_only_sender_can_cancel_friend_request(client: Client, django_user_model
 
 
 def test_only_related_friends_can_unfriend_their_friendship(client: Client, django_user_model):
+    """Only related friends can unfriend their friendship"""
     test_users = create_users(django_user_model)
     user1, user2, user3 = test_users['user1'], test_users['user2'], test_users['user3']
     user1.friendship.add_friend(user2)
