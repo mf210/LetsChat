@@ -1,5 +1,6 @@
 {% extends '_base.html' %}
 {% load static %}
+{% load friendships_extras %}
 
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/friendships/friend_list.css' %}">
@@ -25,7 +26,7 @@
                         </div>
                     </a>
                     <div class="d-flex flex-row card-right flex-grow-1 justify-content-end mx-2">
-                        
+                        {% if user|is_friend_with:account %}
                             <div class="d-flex flex-row friends-text-container p-3">
                                 <p class="friends-text m-auto">
                                     Friends 
@@ -34,15 +35,23 @@
                                 check_circle_outline
                                 </span>
                             </div>
-                        
-                            
+                        {% elif user == account %}
+                            <div class="d-flex flex-row friends-text-container p-3">
+                                <p class="friends-text m-auto">
+                                    This is you 
+                                </p>
+                                <span class="material-icons m-auto pl-2">
+                                person_pin
+                                </span>
+                            </div>
+                        {% else %}
                             <div class="d-flex flex-row friends-text-container p-3">
                                 <p class="friends-text m-auto">
                                     Not Friends 
                                 </p>
                                 <span class="material-icons cancel-icon m-auto pl-2">cancel</span>
                             </div>
-                        
+                        {% endif %}
                     </div>
                 </div>
                 {% if forloop.counter|divisibleby:2 %}

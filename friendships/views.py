@@ -72,7 +72,7 @@ class UnfriendView(LoginRequiredMixin, View):
 class FriendListView(LoginRequiredMixin, View):
     """List user's friends"""
     def get(self, request, *args, **kwargs):
-        user = get_object_or_404(get_user_model(), username=kwargs.get('username'))
+        user = get_object_or_404(USER_MODEL, username=kwargs.get('username'))
         friends = user.friendship.friends.all()
         # pagination
         page_num = request.GET.get('page')
