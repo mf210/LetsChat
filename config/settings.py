@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'home',
     'friendships',
+    'groupchats',
     # Third-party
     'allauth',
     'allauth.account',
