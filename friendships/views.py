@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 from .models import FriendRequest
 
 
-USER_MODEL = get_user_model()
+User = get_user_model()
 
 
 class HandleFriendRequestView(LoginRequiredMixin, View):
@@ -32,7 +32,7 @@ class SendFriendRequestView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         receiver_id = request.POST.get('receiver_id')
         receiver = get_object_or_404(
-            USER_MODEL.objects.exclude(pk=request.user.pk),
+            User.objects.exclude(pk=request.user.pk),
             id=receiver_id
         )
         if FriendRequest.objects.filter(sender=request.user, receiver=receiver).exists():
@@ -72,7 +72,7 @@ class UnfriendView(LoginRequiredMixin, View):
 class FriendListView(LoginRequiredMixin, View):
     """List user's friends"""
     def get(self, request, *args, **kwargs):
-        user = get_object_or_404(USER_MODEL, username=kwargs.get('username'))
+        user = get_object_or_404(User, username=kwargs.get('username'))
         friends = user.friendship.friends.all()
         # pagination
         page_num = request.GET.get('page')

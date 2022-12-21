@@ -2,13 +2,13 @@ from django.db import models
 from django.contrib.auth import get_user_model
 
 
-USER_MODEL = get_user_model()
+User = get_user_model()
 
 
 
 class Friendship(models.Model):
-    user = models.OneToOneField(USER_MODEL, on_delete=models.CASCADE)
-    friends = models.ManyToManyField(USER_MODEL, blank=True, related_name='friendships')
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    friends = models.ManyToManyField(User, blank=True, related_name='friendships')
 
     def __str__(self):
         return self.user.username
@@ -41,8 +41,8 @@ class FriendRequest(models.Model):
         2. RECIVER
             - Person receiving the friend friend
     """
-    sender = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE, related_name='sent_friend_reqs')
-    receiver = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE, related_name='received_friend_reqs')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_friend_reqs')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_friend_reqs')
     is_active = models.BooleanField(default=True)
     creation_time = models.DateTimeField(auto_now_add=True)
 
