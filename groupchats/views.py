@@ -9,5 +9,7 @@ from .models import GroupChatRoom
 class GroupChatRoomView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         room_name = kwargs.get('room_name')
-        group_chat_room_obj = get_object_or_404(GroupChatRoom, name=room_name)
-        return render(request, 'groupchats/chat_room.html')
+        context = {
+            'chat_room_obj': get_object_or_404(GroupChatRoom, name=room_name),
+        }
+        return render(request, 'groupchats/chat_room.html', context)
