@@ -27,6 +27,7 @@ urlpatterns = [
     path('account/', include('allauth.urls')),
     path('accounts/', include('accounts.urls')),
     path('friendships/', include('friendships.urls')),
+    path('groupchats/', include('groupchats.urls')),
     path('', home_views.index, name='home'),
 ] 
 
