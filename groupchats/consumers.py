@@ -20,12 +20,13 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
     # Receive message from WebSocket
     async def receive_json(self, content, **kwargs):
         command = content.get('command')
-        message = content.get('message', '')
+        message = content.get('message', '').strip()
 
         if command == 'send' and message:
             # Send message to room group
             await self.channel_layer.group_send(
-                self.room_group_name, {
+                self.room_group_name,
+                {
                     "type": "chat_message",
                     "message": message,
                     "username": self.scope['user'].username,

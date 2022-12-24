@@ -30,11 +30,15 @@ document.getElementById('id-chat-message-input').onkeyup = function(e) {
 
 document.querySelector('#id-chat-message-submit').onclick = function(e) {
     const messageInputDom = document.querySelector('#id-chat-message-input');
-    const message = messageInputDom.value;
-    chatSocket.send(JSON.stringify({
-        command: 'send',
-        message: message
-    }));
+    const message = messageInputDom.value.trim();
+    if (message) {
+        chatSocket.send(JSON.stringify({
+            command: 'send',
+            message: message
+        }));
+    } else {
+        showClientErrorModal("You can't send an empty message!");
+    }
     messageInputDom.value = '';
 };
 
@@ -85,4 +89,9 @@ function appendChatMessage(data){
     newMessageDiv.appendChild(div1);
 
     chatLog.insertBefore(newMessageDiv, chatLog.firstChild);
+};
+
+function showClientErrorModal(message){
+    document.getElementById("error-modal-body").innerHTML = message;
+    document.getElementById("modal-button").click();
 };
