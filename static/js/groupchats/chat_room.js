@@ -51,6 +51,7 @@ function createChatMessageElement(msg, username, profileImageUrl){
     let newMessageDiv = document.createElement("div");
     newMessageDiv.classList.add('d-flex');
     newMessageDiv.classList.add('flex-row');
+    newMessageDiv.classList.add('message-container');
     
     let profileImage = document.createElement('img');
     profileImage.classList.add('profile-image');
@@ -68,6 +69,7 @@ function createChatMessageElement(msg, username, profileImageUrl){
     div2.classList.add('flex-row');
 
     let usernameSpan = document.createElement('span');
+    usernameSpan.classList.add('username-span');
     usernameSpan.innerHTML = username;
     div2.appendChild(usernameSpan);
 

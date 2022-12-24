@@ -48,7 +48,7 @@
 .timestamp-span:hover{
 	cursor: pointer;
 }
-#id_chatroom_loading_spinner{
+#id-chatroom-loading-spinner{
 		position: absolute;
 }
 .connected-users{
