@@ -29,7 +29,8 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
                     "type": "chat_message",
                     "message": message,
                     "username": self.scope['user'].username,
-                    "profile_image_url": self.scope['user'].profile_image.url
+                    "profile_image_url": self.scope['user'].profile_image.url,
+                    "profile_url": self.scope['user'].get_absolute_url(),
                 }
             )
     
@@ -39,5 +40,6 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
         await self.send_json({
             'message': event["message"],
             'username': event["username"],
-            'profile_image_url': event["profile_image_url"]
+            'profile_image_url': event["profile_image_url"],
+            "profile_url": event["profile_url"],
         })

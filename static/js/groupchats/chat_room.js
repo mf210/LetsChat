@@ -39,13 +39,13 @@ document.querySelector('#id-chat-message-submit').onclick = function(e) {
 };
 
 function appendChatMessage(data){
+
     const msg = data['message'] + '\n';
     const username = data['username'] + ": ";
-    const profileImageUrl = data['profile_image_url'];
-    createChatMessageElement(msg, username, profileImageUrl)
-};
+    const profileImageURL = data['profile_image_url'];
+    const profileURL = data['profile_url'];
 
-function createChatMessageElement(msg, username, profileImageUrl){
+    // Create chat message element
     let chatLog = document.getElementById("id-chat-log");
 
     let newMessageDiv = document.createElement("div");
@@ -54,10 +54,11 @@ function createChatMessageElement(msg, username, profileImageUrl){
     newMessageDiv.classList.add('message-container');
     
     let profileImage = document.createElement('img');
+    profileImage.addEventListener('click', (e) => window.open(profileURL, '_blank'));
     profileImage.classList.add('profile-image');
     profileImage.classList.add('rounded-circle');
     profileImage.classList.add('img-flui');
-    profileImage.src = profileImageUrl;
+    profileImage.src = profileImageURL;
     newMessageDiv.appendChild(profileImage);
 
     let div1 = document.createElement('div');
@@ -69,6 +70,7 @@ function createChatMessageElement(msg, username, profileImageUrl){
     div2.classList.add('flex-row');
 
     let usernameSpan = document.createElement('span');
+    usernameSpan.addEventListener('click', (e) => window.open(profileURL, '_blank'));
     usernameSpan.classList.add('username-span');
     usernameSpan.innerHTML = username;
     div2.appendChild(usernameSpan);
