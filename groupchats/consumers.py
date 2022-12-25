@@ -7,11 +7,13 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 class GroupChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self):
+        self.user = self.scope['user']
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-        self.room_group_name = f"chat_{self.room_name}"
-        # Join room group
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-        await self.accept()
+        self.room_group_name = f"groupchat_{self.room_name}"
+        if self.user.is_authenticated:
+            # Join room group
+            await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+            await self.accept()
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -29,9 +31,9 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
                 {
                     "type": "chat_message",
                     "message": message,
-                    "username": self.scope['user'].username,
-                    "profile_image_url": self.scope['user'].profile_image.url,
-                    "profile_url": self.scope['user'].get_absolute_url(),
+                    "username": self.user.username,
+                    "profile_image_url": self.user.profile_image.url,
+                    "profile_url": self.user.get_absolute_url(),
                 }
             )
     
