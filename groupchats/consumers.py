@@ -1,5 +1,7 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from channels.db import database_sync_to_async
 
+from .models import GroupChatRoom
 
 
 
@@ -10,7 +12,9 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
         self.user = self.scope['user']
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"groupchat_{self.room_name}"
-        if self.user.is_authenticated:
+        if self.user.is_authenticated \
+           and await self.set_group_chat_room_obj() \
+           and await self.is_user_in_gcr_users_list():
             # Join room group
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
@@ -23,7 +27,6 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
     async def receive_json(self, content, **kwargs):
         command = content.get('command')
         message = content.get('message', '').strip()
-
         if command == 'send' and message:
             # Send message to room group
             await self.channel_layer.group_send(
@@ -46,3 +49,18 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
             'profile_image_url': event["profile_image_url"],
             "profile_url": event["profile_url"],
         })
+
+    
+    # Database Queries
+    @database_sync_to_async
+    def set_group_chat_room_obj(self):
+        # set group room object and return true if it's exisit
+        try:
+            self.gcr_obj = GroupChatRoom.objects.get(name=self.room_name)
+            return True
+        except GroupChatRoom.DoesNotExist:
+            return False
+
+    @database_sync_to_async
+    def is_user_in_gcr_users_list(self):
+        return self.gcr_obj.users.filter(pk=self.user.pk).exists()
