@@ -1,7 +1,7 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 
-from .models import GroupChatRoom
+from .models import GroupChatRoom, GroupChatRoomMessage
 
 
 
@@ -28,6 +28,7 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
         command = content.get('command')
         message = content.get('message', '').strip()
         if command == 'send' and message:
+            gcrm_obj = await self.save_message(message)
             # Send message to room group
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -51,7 +52,7 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
         })
 
     
-    # Database Queries
+    ############### Database Queries ###############
     @database_sync_to_async
     def set_group_chat_room_obj(self):
         # set group room object and return true if it's exisit
@@ -64,3 +65,12 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
     @database_sync_to_async
     def is_user_in_gcr_users_list(self):
         return self.gcr_obj.users.filter(pk=self.user.pk).exists()
+
+    @database_sync_to_async
+    def save_message(self, msg):
+        # save and return GroupChatRoomMessage object
+        return GroupChatRoomMessage.objects.create(
+            user=self.user,
+            room=self.gcr_obj,
+            content=msg
+        )
