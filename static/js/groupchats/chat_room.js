@@ -48,6 +48,7 @@ function appendChatMessage(data){
     const username = data['username'] + ": ";
     const profileImageURL = data['profile_image_url'];
     const profileURL = data['profile_url'];
+    const msgTimestamp = data['msg_timestamp'];
 
     // Create chat message element
     let chatLog = document.getElementById("id-chat-log");
@@ -78,6 +79,13 @@ function appendChatMessage(data){
     usernameSpan.classList.add('username-span');
     usernameSpan.innerHTML = username;
     div2.appendChild(usernameSpan);
+
+    let timestampSpan = document.createElement("span");
+    timestampSpan.innerHTML = msgTimestamp;
+    timestampSpan.classList.add("timestamp-span");
+    timestampSpan.classList.add("d-flex");
+    timestampSpan.classList.add("align-items-center");
+    div2.appendChild(timestampSpan);
 
     div1.appendChild(div2);
 
