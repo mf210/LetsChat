@@ -14,7 +14,7 @@ class GroupChatRoomView(LoginRequiredMixin, View):
         room_name = kwargs.get('room_name')
         chat_room_obj = get_object_or_404(GroupChatRoom, name=room_name)
         if not chat_room_obj.users.filter(pk=request.user.pk).exists():
-            # user did not join to the chat room
+            # user is not in chat room users list (not joined)
             return render(request, 'groupchats/not_joined.html', status=HTTPStatus.FORBIDDEN)
 
         context = {'chat_room_obj': chat_room_obj}
