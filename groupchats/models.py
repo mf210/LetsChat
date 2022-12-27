@@ -31,7 +31,7 @@ class GroupChatRoomMessage(models.Model):
     Chat messages created by a user inside a GroupChatRoom
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    room = models.ForeignKey(GroupChatRoom, on_delete=models.CASCADE)
+    room = models.ForeignKey(GroupChatRoom, on_delete=models.CASCADE, related_name='messages')
     timestamp = models.DateTimeField(auto_now_add=True)
     content = models.TextField()
 

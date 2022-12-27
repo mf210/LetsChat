@@ -13,6 +13,10 @@ chatSocket.onmessage = function(e) {
     appendChatMessage(data);
 };
 
+chatSocket.onopen = function(e) {
+    getChatMessages();
+};
+
 chatSocket.onclose = function(e) {
     console.error('ChatSocket closed.');
 };
@@ -42,9 +46,10 @@ document.querySelector('#id-chat-message-submit').onclick = function(e) {
     messageInputDom.value = '';
 };
 
-function appendChatMessage(data){
+function appendChatMessage(data, insertDown=true){
 
     const msg = data['message'] + '\n';
+    const msgID = data['msg_id'];
     const username = data['username'] + ": ";
     const profileImageURL = data['profile_image_url'];
     const profileURL = data['profile_url'];
@@ -95,11 +100,39 @@ function appendChatMessage(data){
     div1.appendChild(msgP);
 
     newMessageDiv.appendChild(div1);
-
-    chatLog.insertBefore(newMessageDiv, chatLog.firstChild);
+    newMessageDiv.setAttribute('msg-id', msgID);
+    if (insertDown){
+        chatLog.insertBefore(newMessageDiv, chatLog.firstChild);
+    } else {
+        chatLog.appendChild(newMessageDiv);
+    }
 };
 
 function showClientErrorModal(message){
     document.getElementById("error-modal-body").innerHTML = message;
     document.getElementById("modal-button").click();
 };
+
+
+function getChatMessages(){
+    const earliestMsg = document.getElementById("id-chat-log").lastChild;
+    const earliestMsgID = earliestMsg ? earliestMsg.getAttribute('msg-id') : null;
+    const url = `${window.location.href}/messages/?earliest_msg_id=${earliestMsgID}`;
+    fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+        data.forEach(obj => appendChatMessage(obj, insertDown=false));
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+/*
+    Get the next page of chat messages when scrolls to bottom
+*/
+const chatLog = document.getElementById("id-chat-log")
+chatLog.addEventListener("scroll", function(e){
+    if ((Math.abs(chatLog.scrollTop) + 2) >= (chatLog.scrollHeight - chatLog.offsetHeight)) {
+        getChatMessages();
+    }
+});

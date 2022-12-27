@@ -39,6 +39,7 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
                     "profile_image_url": self.user.profile_image.url,
                     "profile_url": self.user.get_absolute_url(),
                     "msg_timestamp": gcrm_obj.timestamp.ctime(),
+                    "msg_id": gcrm_obj.id,
                 }
             )
     
@@ -51,6 +52,7 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
             'profile_image_url': event["profile_image_url"],
             "profile_url": event["profile_url"],
             "msg_timestamp": event["msg_timestamp"],
+            "msg_id": event["msg_id"],
         })
 
     
