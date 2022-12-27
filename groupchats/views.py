@@ -28,16 +28,16 @@ class GroupChatRoomMessageView(LoginRequiredMixin, View):
         if not chat_room_obj.users.filter(pk=request.user.pk).exists():
             # user is not in chat room users list (not joined)
             return HttpResponse(status=HTTPStatus.FORBIDDEN)
-        # Pagination
+        # get earliest chat messages based on earliest_msg_id
         earliest_msg_id = request.GET.get('earliest_msg_id')
         try:
             earliest_msg = chat_room_obj.messages.get(id=earliest_msg_id)
-            msg_list = chat_room_obj.messages.filter(timestamp__lt=earliest_msg.timestamp)[:10]
+            msg_list = chat_room_obj.messages.filter(timestamp__lt=earliest_msg.timestamp)
         except (GroupChatRoomMessage.DoesNotExist, ValueError):
-            msg_list = chat_room_obj.messages.all()[:10]
+            msg_list = chat_room_obj.messages.all()
         # prepare data for sending
         data = []
-        for msg_obj in msg_list:
+        for msg_obj in msg_list[:25]:
             data.append({
                 'message': msg_obj.content,
                 'username': msg_obj.user.username,
