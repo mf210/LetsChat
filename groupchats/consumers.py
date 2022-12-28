@@ -1,9 +1,13 @@
+from collections import defaultdict
+
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 
 from .models import GroupChatRoom, GroupChatRoomMessage
 
 
+
+online_users = defaultdict(set)
 
 
 class GroupChatConsumer(AsyncJsonWebsocketConsumer):
@@ -18,10 +22,14 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
             # Join room group
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
+            online_users[self.room_group_name].add(self.user.username)
+            await self.send_room_online_users_count_for_group()
 
     async def disconnect(self, close_code):
         # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        online_users[self.room_group_name].discard(self.user.username)
+        await self.send_room_online_users_count_for_group()
 
     # Receive message from WebSocket
     async def receive_json(self, content, **kwargs):
@@ -43,10 +51,20 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
                 }
             )
     
+    async def send_room_online_users_count_for_group(self):
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'room_online_users_count',
+                'room_online_users_count': len(online_users[self.room_group_name]),
+            }
+        )
+    
     # Receive message from room group
     async def chat_message(self, event):
         # Send message to WebSocket
         await self.send_json({
+            'msg_type': 'message',
             'message': event["message"],
             'username': event["username"],
             'profile_image_url': event["profile_image_url"],
@@ -54,7 +72,15 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
             "msg_timestamp": event["msg_timestamp"],
             "msg_id": event["msg_id"],
         })
-
+    
+    async def room_online_users_count(self, event):
+        # Send count of online users in this room group to WebSocket
+        await self.send_json(
+            {
+                'msg_type': 'room_online_users_count',
+                'room_online_users_count': event['room_online_users_count'],
+            }
+        )
     
     ############### Database Queries ###############
     @database_sync_to_async

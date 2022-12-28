@@ -14,8 +14,14 @@ const chatSocket = new WebSocket(
 );
 
 chatSocket.onmessage = function(e) {
+    console.log('You have new message!')
     const data = JSON.parse(e.data);
-    appendChatMessage(data);
+    const msgType = data['msg_type'];
+    if (msgType === 'message'){
+        appendChatMessage(data);
+    } else if (msgType === 'room_online_users_count') {
+        setRoomOnlineUsersCount(data);
+    }
 };
 
 chatSocket.onopen = function(e) {
@@ -155,4 +161,10 @@ function displayChatRoomLoadingSpinner(display){
     else {
         spinner.style.display = "none";
     }
+}
+
+// Set number of online users in this chat room
+function setRoomOnlineUsersCount(data){
+    element = document.getElementById("id-connected-users");
+    element.innerHTML = data['room_online_users_count'];
 }
