@@ -4,7 +4,6 @@ const chatLog = document.getElementById("id-chat-log");
 const spinner = document.getElementById("id-chatroom-loading-spinner");
 let canUserLoadChatMessages = true;
 
-
 const chatSocket = new WebSocket(
     'ws://'
     + window.location.host
@@ -66,14 +65,12 @@ function appendChatMessage(data, insertDown=true){
     const msgTimestamp = data['msg_timestamp'];
 
     // Create chat message element
-    let chatLog = document.getElementById("id-chat-log");
-
-    let newMessageDiv = document.createElement("div");
+    const newMessageDiv = document.createElement("div");
     newMessageDiv.classList.add('d-flex');
     newMessageDiv.classList.add('flex-row');
     newMessageDiv.classList.add('message-container');
     
-    let profileImage = document.createElement('img');
+    const profileImage = document.createElement('img');
     profileImage.addEventListener('click', (e) => window.open(profileURL, '_blank'));
     profileImage.classList.add('profile-image');
     profileImage.classList.add('rounded-circle');
@@ -81,21 +78,21 @@ function appendChatMessage(data, insertDown=true){
     profileImage.src = profileImageURL;
     newMessageDiv.appendChild(profileImage);
 
-    let div1 = document.createElement('div');
+    const div1 = document.createElement('div');
     div1.classList.add('d-flex');
     div1.classList.add('flex-column');
 
-    let div2 = document.createElement('div');
+    const div2 = document.createElement('div');
     div2.classList.add('d-flex');
     div2.classList.add('flex-row');
 
-    let usernameSpan = document.createElement('span');
+    const usernameSpan = document.createElement('span');
     usernameSpan.addEventListener('click', (e) => window.open(profileURL, '_blank'));
     usernameSpan.classList.add('username-span');
     usernameSpan.innerHTML = username;
     div2.appendChild(usernameSpan);
 
-    let timestampSpan = document.createElement("span");
+    const timestampSpan = document.createElement("span");
     timestampSpan.innerHTML = msgTimestamp;
     timestampSpan.classList.add("timestamp-span");
     timestampSpan.classList.add("d-flex");
@@ -104,7 +101,7 @@ function appendChatMessage(data, insertDown=true){
 
     div1.appendChild(div2);
 
-    let msgP = document.createElement('p');
+    const msgP = document.createElement('p');
     msgP.innerHTML = msg;
     msgP.classList.add('msg-p');
     div1.appendChild(msgP);
