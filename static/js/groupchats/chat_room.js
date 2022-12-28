@@ -3,6 +3,7 @@ const roomName = JSON.parse(document.getElementById('room-name').textContent);
 const chatLog = document.getElementById("id-chat-log");
 const spinner = document.getElementById("id-chatroom-loading-spinner");
 let canUserLoadChatMessages = true;
+const md = window.markdownit();
 
 const chatSocket = new WebSocket(
     'ws://'
@@ -102,7 +103,7 @@ function appendChatMessage(data, insertDown=true){
     div1.appendChild(div2);
 
     const msgP = document.createElement('p');
-    msgP.innerHTML = msg;
+    msgP.innerHTML = md.render(msg);
     msgP.classList.add('msg-p');
     div1.appendChild(msgP);
 
