@@ -45,6 +45,7 @@ def test_not_joined_user_to_group_chat_room_gets_forbidden_status_code(
     response = admin_client.get(url)
     assert response.status_code == HTTPStatus.FORBIDDEN
 
+
 def create_group_chat_room_messages(django_user_model):
     user1 = django_user_model.objects.create_user(
         username='user-one',
@@ -81,6 +82,7 @@ def create_group_chat_room_messages(django_user_model):
     }
     return user1, gcrm_1_dict, gcrm_2_dict
 
+
 def test_get_chat_messages_without_earliest_msg_id_parameter(client, django_user_model):
     """
     Joined users (who are in users list of group chat room model) 
@@ -96,6 +98,7 @@ def test_get_chat_messages_without_earliest_msg_id_parameter(client, django_user
     assert response_data[0] == gcrm_2_dict
     assert response_data[1] == gcrm_1_dict
 
+
 def test_get_chat_messages_with_earliest_msg_id_parameter(client, django_user_model):
     """
     Test GroupChatRoomMessageView pagination system
@@ -109,6 +112,7 @@ def test_get_chat_messages_with_earliest_msg_id_parameter(client, django_user_mo
     assert len(response_data) == 1
     assert response_data[0] == gcrm_1_dict
 
+
 def test_chat_room_message_view_return_404_for_not_registered_chat_rooms(admin_client):
     """
     GroupChatRoomMessageView return 404 status code for not registered chat rooms
@@ -117,6 +121,7 @@ def test_chat_room_message_view_return_404_for_not_registered_chat_rooms(admin_c
     response = admin_client.get(url)
     assert response.status_code == HTTPStatus.NOT_FOUND
     
+
 def test_not_joined_users_to_group_chat_room_cannot_get_chat_messages(
     admin_client, django_user_model):
     """
