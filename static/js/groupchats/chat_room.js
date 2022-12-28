@@ -1,4 +1,9 @@
+// Variables
 const roomName = JSON.parse(document.getElementById('room-name').textContent);
+const chatLog = document.getElementById("id-chat-log");
+const spinner = document.getElementById("id-chatroom-loading-spinner");
+let canUserLoadChatMessages = true;
+
 
 const chatSocket = new WebSocket(
     'ws://'
@@ -115,6 +120,7 @@ function showClientErrorModal(message){
 
 
 function getChatMessages(){
+    displayChatRoomLoadingSpinner(true);
     const earliestMsg = document.getElementById("id-chat-log").lastChild;
     const earliestMsgID = earliestMsg ? earliestMsg.getAttribute('msg-id') : null;
     const url = `${window.location.href}/messages/?earliest_msg_id=${earliestMsgID}`;
@@ -122,17 +128,31 @@ function getChatMessages(){
     .then((response) => response.json())
     .then((data) => {
         data.forEach(obj => appendChatMessage(obj, insertDown=false));
+        canUserLoadChatMessages = true;
+        displayChatRoomLoadingSpinner(false);
     })
     .catch((error) => {
         console.error('Error:', error);
+        canUserLoadChatMessages = true;
+        displayChatRoomLoadingSpinner(false);
     });
 }
-/*
-    Get the next page of chat messages when scrolls to bottom
-*/
-const chatLog = document.getElementById("id-chat-log")
+
+// Get the next page of chat messages when scrolls to bottom
 chatLog.addEventListener("scroll", function(e){
-    if ((Math.abs(chatLog.scrollTop) + 2) >= (chatLog.scrollHeight - chatLog.offsetHeight)) {
+    if ((Math.abs(chatLog.scrollTop) + 2) >= (chatLog.scrollHeight - chatLog.offsetHeight)
+       && canUserLoadChatMessages) {
+        canUserLoadChatMessages = false;
         getChatMessages();
     }
 });
+
+// Display spinner for loading chat messages
+function displayChatRoomLoadingSpinner(display){
+    if(display){
+        spinner.style.display = "block";
+    }
+    else {
+        spinner.style.display = "none";
+    }
+}
