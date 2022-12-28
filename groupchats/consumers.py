@@ -63,24 +63,11 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
     # Receive message from room group
     async def chat_message(self, event):
         # Send message to WebSocket
-        await self.send_json({
-            'msg_type': 'message',
-            'message': event["message"],
-            'username': event["username"],
-            'profile_image_url': event["profile_image_url"],
-            "profile_url": event["profile_url"],
-            "msg_timestamp": event["msg_timestamp"],
-            "msg_id": event["msg_id"],
-        })
+        await self.send_json(event)
     
     async def room_online_users_count(self, event):
         # Send count of online users in this room group to WebSocket
-        await self.send_json(
-            {
-                'msg_type': 'room_online_users_count',
-                'room_online_users_count': event['room_online_users_count'],
-            }
-        )
+        await self.send_json(event)
     
     ############### Database Queries ###############
     @database_sync_to_async

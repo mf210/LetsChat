@@ -16,8 +16,8 @@ const chatSocket = new WebSocket(
 chatSocket.onmessage = function(e) {
     console.log('You have new message!')
     const data = JSON.parse(e.data);
-    const msgType = data['msg_type'];
-    if (msgType === 'message'){
+    const msgType = data['type'];
+    if (msgType === 'chat_message'){
         appendChatMessage(data);
     } else if (msgType === 'room_online_users_count') {
         setRoomOnlineUsersCount(data);
@@ -163,7 +163,7 @@ function displayChatRoomLoadingSpinner(display){
     }
 }
 
-// Set number of online users in this chat room
+// Set count of online users in this chat room
 function setRoomOnlineUsersCount(data){
     element = document.getElementById("id-connected-users");
     element.innerHTML = data['room_online_users_count'];
