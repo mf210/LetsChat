@@ -14,7 +14,6 @@ const chatSocket = new WebSocket(
 );
 
 chatSocket.onmessage = function(e) {
-    console.log('You have new message!')
     const data = JSON.parse(e.data);
     const msgType = data['type'];
     if (msgType === 'chat_message'){
