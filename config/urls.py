@@ -28,6 +28,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('friendships/', include('friendships.urls')),
     path('groupchats/', include('groupchats.urls')),
+    path('privatechats/', include('privatechats.urls')),
     path('', home_views.index, name='home'),
 ] 
 

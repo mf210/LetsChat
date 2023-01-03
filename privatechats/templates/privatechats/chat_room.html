@@ -1,0 +1,84 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/privatechats/chat_room.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-sm-9 m-0 p-2">
+			<div class="card" id="id_chatroom_card">
+				<div class="d-flex flex-row align-items-center card-header" id="id_room_title">
+				<a class="d-flex flex-row" target="_blank" id="id_user_info_container">
+					<img class="profile-image rounded-circle img-fluid" id="id_other_user_profile_image" src="{% static 'images/default_user.png' %}">
+					<h3 class="ml-2" id="id_other_username"></h3>
+				</a>
+				</div>
+				<div class="card-body p-1">
+					<div class="d-flex flex-column" id="id_chat_log_container">
+						<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
+							<div class="spinner-border text-primary"  id="id_chatroom_loading_spinner" role="status"  style="display: none; ">
+								<span class="sr-only">Loading...</span>
+							</div>
+						</div>
+						<div class="d-flex chat-log" id="id_chat_log"></div>
+						<div class="d-flex flex-row chat-message-input-container">
+							<textarea class="flex-grow-1 chat-message-input" id="id_chat_message_input"></textarea>
+							<button class="btn btn-primary chat-message-submit-button">
+								<span id="id_chat_message_submit" class="material-icons">send</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-sm-3 m-0 p-2">
+			<div class="card">
+				<div class="d-flex flex-row align-items-center card-header">
+					<h3 >Friends</h3>
+				</div>
+				<div class="card-body p-1">	
+					<div class="d-flex flex-column friends-list-container ">
+						{% for friend in friends %}
+						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="onSelectFriend('{{friend.id}}')" id="id_friend_container_{{friend.id}}">
+							<img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{x.friend.id}}" src="{{ friend.profile_image.url }}" >
+							<div class="d-flex flex-column">
+								<span class="username-span">{{friend.username}}</span>
+								<span class="friend-message-span">xxxx</span>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- Client Error MODAL -->
+<button type="button" id="id_trigger_client_error_modal" class="d-none btn btn-primary" data-toggle="modal" data-target="#id_client_error_modal"></button>
+<div class="modal fade" id="id_client_error_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Socket Client Error</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="id_client_error_modal_body">Something went wrong.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="id_client_error_modal_close_btn">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Client Error MODAL -->
+
+{% endblock %}
