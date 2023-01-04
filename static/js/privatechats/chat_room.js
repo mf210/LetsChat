@@ -11,6 +11,7 @@ let selectedFriendProfileURL = null;
 
 function onSelectFriend(username, profileURL) {
     clearHighlightedFriend();
+    chatLog.innerHTML = ""      // clear chat log 
     if (chatSocket !== null) {
         chatSocket.close();
     }
@@ -41,7 +42,7 @@ function setupWebSocket(roommate) {
     };
     
     chatSocket.onopen = function(e) {
-        // getChatMessages();
+        getChatMessages();
     };
     
     chatSocket.onclose = function(e) {
@@ -145,7 +146,7 @@ function getChatMessages(){
     displayChatRoomLoadingSpinner(true);
     const earliestMsg = document.getElementById("id_chat_log").lastChild;
     const earliestMsgID = earliestMsg ? earliestMsg.getAttribute('msg-id') : null;
-    const url = `${window.location.href}/messages/?earliest_msg_id=${earliestMsgID}`;
+    const url = `${window.location.href}room/${selectedFriendUsername}/messages/?earliest_msg_id=${earliestMsgID}`;
     fetch(url)
     .then((response) => response.json())
     .then((data) => {
