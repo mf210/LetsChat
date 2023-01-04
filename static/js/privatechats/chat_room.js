@@ -4,10 +4,21 @@ const chatLog = document.getElementById("id_chat_log");
 const spinner = document.getElementById("id_chatroom_loading_spinner");
 let canUserLoadChatMessages = true;
 const md = window.markdownit();
+let selectedFriendDiv = null;
+let selectedFriendUsername = null;
+let selectedFriendProfileURL = null;
 
 
-function onSelectFriend(username) {
+function onSelectFriend(username, profileURL) {
+    clearHighlightedFriend();
+    if (chatSocket !== null) {
+        chatSocket.close();
+    }
+    selectedFriendDiv = document.getElementById(`id_friend_container_${username}`);
+    selectedFriendUsername = username;
+    selectedFriendProfileURL = profileURL;
     setupWebSocket(username);
+    highlightFriend();
 }
 
 function setupWebSocket(roommate) {
@@ -172,4 +183,24 @@ function displayChatRoomLoadingSpinner(display){
 function setRoomOnlineUsersCount(data){
     element = document.getElementById("id_connected_users");
     element.innerHTML = data['room_online_users_count'];
+}
+
+function highlightFriend(){
+    // select new friend
+    selectedFriendDiv.style.background = "#f2f2f2"
+    document.getElementById("id_other_username").innerHTML = selectedFriendUsername;
+    document.getElementById("id_other_user_profile_image").classList.remove("d-none");
+    document.getElementById("id_user_info_container").href = selectedFriendProfileURL;
+    document.getElementById("id_other_user_profile_image").src = document
+        .getElementById(`id_friend_img_${selectedFriendUsername}`).getAttribute('src');
+}
+
+function clearHighlightedFriend(){
+    if (selectedFriendDiv !== null) {
+        selectedFriendDiv.style.background = ""
+        // clear the profile image and username of current chat
+        document.getElementById("id_other_user_profile_image").classList.add("d-none")
+        document.getElementById("id_other_user_profile_image").src = ''
+        document.getElementById("id_other_username").innerHTML = ""
+    }
 }
