@@ -15,7 +15,7 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 
 import groupchats.routing
-
+import privatechats.routing
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
@@ -26,7 +26,8 @@ application = ProtocolTypeRouter({
     "http": django_asgi_app,
     "websocket": AllowedHostsOriginValidator(
             AuthMiddlewareStack(
-                URLRouter(groupchats.routing.websocket_urlpatterns)
+                URLRouter(groupchats.routing.websocket_urlpatterns + 
+                          privatechats.routing.websocket_urlpatterns)
             )
         ),
 })
