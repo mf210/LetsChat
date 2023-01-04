@@ -9,6 +9,15 @@ let selectedFriendUsername = null;
 let selectedFriendProfileURL = null;
 
 
+
+// Select related friend if user redirected to this page from someones profile
+let url = new URL(window.location.href);
+let friendUsername = url.searchParams.get('friend_username');
+if (friendUsername) {
+    onSelectFriend(friendUsername);
+}
+
+
 function onSelectFriend(username, profileURL) {
     clearHighlightedFriend();
     chatLog.innerHTML = ""      // clear chat log 
