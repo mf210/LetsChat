@@ -14,7 +14,7 @@ let selectedFriendProfileURL = null;
 let url = new URL(window.location.href);
 let friendUsername = url.searchParams.get('friend_username');
 if (friendUsername) {
-    onSelectFriend(friendUsername);
+    document.getElementById(`id_friend_container_${friendUsername}`).click();
 }
 
 
@@ -155,7 +155,7 @@ function getChatMessages(){
     displayChatRoomLoadingSpinner(true);
     const earliestMsg = document.getElementById("id_chat_log").lastChild;
     const earliestMsgID = earliestMsg ? earliestMsg.getAttribute('msg-id') : null;
-    const url = `${window.location.href}room/${selectedFriendUsername}/messages/?earliest_msg_id=${earliestMsgID}`;
+    const url = `/privatechats/room/${selectedFriendUsername}/messages/?earliest_msg_id=${earliestMsgID}`;
     fetch(url)
     .then((response) => response.json())
     .then((data) => {

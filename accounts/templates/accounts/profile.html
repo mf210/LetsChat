@@ -88,6 +88,15 @@
 						</a>
 					</div>
 				</div>
+
+				{% if is_friend %}
+					<a href="{% url 'privatechats:chat-room' %}?friend_username={{ user_object.username }}">
+						<div class="d-flex flex-row align-items-center btn btn-primary m-2 px-4">
+							<span class="material-icons m-auto">message</span>
+							<span class="message-btn-text m-auto pl-2">Message</span>
+						</div>
+					</a>
+				{% endif %}
 	
 			</div>
 
