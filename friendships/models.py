@@ -1,9 +1,12 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericRelation
+
+from notifications.models import Notification
+
 
 
 User = get_user_model()
-
 
 
 class Friendship(models.Model):
@@ -45,6 +48,7 @@ class FriendRequest(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_friend_reqs')
     is_active = models.BooleanField(default=True)
     creation_time = models.DateTimeField(auto_now_add=True)
+    notifications = GenericRelation(Notification)
 
     def __str__(self):
         return f'{self.sender.username} -> {self.receiver.username}'
