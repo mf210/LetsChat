@@ -46,7 +46,6 @@ class FriendRequest(models.Model):
     """
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_friend_reqs')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_friend_reqs')
-    is_active = models.BooleanField(default=True)
     creation_time = models.DateTimeField(auto_now_add=True)
     notifications = GenericRelation(Notification)
 
@@ -58,23 +57,6 @@ class FriendRequest(models.Model):
         Accept a friend request.
         Update both SENDER and RECEIVER friendship.
         """
-        self.receiver.friendship.add_friend(self.sender)
-        self.sender.friendship.add_friend(self.receiver)
-        self.is_active = False
-        self.save()
-
-    def decline(self):
-        """
-        Decline a friend request.
-        Is it "declined" by setting the `is_active` field to False
-        """
-        self.is_active = False
-        self.save()
-
-    def cancel(self):
-        """
-        Cancel a friend request.
-        Is it "cancelled" by setting the `is_active` field to False.
-        This is only different with respect to "declining" through the notification that is generated.
-        """
+        self.receiver.friendship.friends.add(self.sender)
+        self.sender.friendship.friends.add(self.receiver)
         self.delete()

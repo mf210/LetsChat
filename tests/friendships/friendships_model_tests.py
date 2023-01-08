@@ -96,20 +96,7 @@ class FriendRequestModelTests:
     def test_accept_friend_request(self):
         """Accept a friend request"""
         user1, user2 = self.create_users()
-        friendreq_obj = FriendRequest(sender=user1, receiver=user2)
+        friendreq_obj = FriendRequest.objects.create(sender=user1, receiver=user2)
         friendreq_obj.accept()
-        assert not friendreq_obj.is_active
         assert user1.friendship.is_friend_with(user2)
         assert user2.friendship.is_friend_with(user1)
-
-    def test_decline_friend_request(self):
-        """Decline a friend request"""
-        friendreq_obj = self.create_friendreq_obj()
-        friendreq_obj.decline()
-        assert not friendreq_obj.is_active
-
-    def test_cancel_friend_request(self):
-        """Cancel a friend request"""
-        friendreq_obj = self.create_friendreq_obj()
-        friendreq_obj.cancel()
-        assert not FriendRequest.objects.filter(pk=friendreq_obj.pk).exists()

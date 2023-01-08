@@ -21,7 +21,7 @@ class HandleFriendRequestView(LoginRequiredMixin, View):
             friend_req_obj.accept()
             message = 'Friend request accepted!'
         else:
-            friend_req_obj.cancel()
+            friend_req_obj.delete()
             message = 'Friend request Cancelled!'
 
         return HttpResponse(message)
@@ -54,7 +54,7 @@ class CancelFriendRequestView(LoginRequiredMixin, View):
             request.user.sent_friend_reqs,
             pk=friend_req_pk
         )
-        friend_req_obj.cancel()
+        friend_req_obj.delete()
         return HttpResponse('Request cancelled successfully!')
 
 
