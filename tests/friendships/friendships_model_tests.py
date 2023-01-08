@@ -37,30 +37,13 @@ class FriendshipModelTests:
         """Test __str__ method"""
         user1 = self.create_users()['user1']
         assert str(user1.friendship) == user1.username
-
-    def test_add_friend(self):
-        """Add a new friend"""
-        users = self.create_users()
-        user1, user2 = users['user1'], users['user2']
-        assert user1.friendship.friends.count() == 0
-        user1.friendship.add_friend(user2)
-        assert user1.friendship.friends.count() == 1
-        assert user1.friendship.is_friend_with(user2)
-
-    def test_remove_friend(self):
-        """Remove a friend from user's friend list"""
-        users = self.create_users()
-        user1, user2 = users['user1'], users['user2']
-        user1.friendship.add_friend(user2)
-        user1.friendship.remove_friend(user2)
-        assert not user1.friendship.is_friend_with(user2)
     
     def test_unfriend(self):
         """Unfriending user"""
         users = self.create_users()
         user1, user2 = users['user1'], users['user2']
-        user1.friendship.add_friend(user2)
-        user2.friendship.add_friend(user1)
+        user1.friendship.friends.add(user2)
+        user2.friendship.friends.add(user1)
         user1.friendship.unfriend(user2)
         assert not user1.friendship.is_friend_with(user2)
         assert not user2.friendship.is_friend_with(user1)

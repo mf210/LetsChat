@@ -16,24 +16,14 @@ class Friendship(models.Model):
     def __str__(self):
         return self.user.username
 
-    def add_friend(self, user):
-        """Add a new friend"""
-        self.friends.add(user)
-
     def is_friend_with(self, user):
         """Check friendship between self and passed user"""
         return self.friends.filter(pk=user.pk).exists()
 
-    def remove_friend(self, user):
-        """Remove a friend"""
-        self.friends.remove(user)
-
     def unfriend(self, user):
-        """
-        Initiate the action of unfriending someone.
-        """
-        self.remove_friend(user)
-        user.friendship.remove_friend(self.user)
+        """Remove both users from each other friends list"""
+        self.friends.remove(user)
+        user.friendship.friends.remove(self.user)
 
 
 class FriendRequest(models.Model):

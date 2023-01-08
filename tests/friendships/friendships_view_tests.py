@@ -132,8 +132,8 @@ def test_only_related_friends_can_unfriend_their_friendship(client: Client, djan
     """Only related friends can unfriend their friendship"""
     test_users = create_users(django_user_model)
     user1, user2, user3 = test_users['user1'], test_users['user2'], test_users['user3']
-    user1.friendship.add_friend(user2)
-    user2.friendship.add_friend(user1)
+    user1.friendship.friends.add(user2)
+    user2.friendship.friends.add(user1)
     client.force_login(user3)
     url = reverse('friendships:unfriend')
     response = client.post(url, data={'pk': user2.pk})
@@ -149,8 +149,8 @@ def test_user_friend_list_view(client: Client, django_user_model):
     """Test FriendListView"""
     test_users = create_users(django_user_model)
     user1, user2, user3 = test_users['user1'], test_users['user2'], test_users['user3']
-    user1.friendship.add_friend(user2)
-    user1.friendship.add_friend(user3)
+    user1.friendship.friends.add(user2)
+    user1.friendship.friends.add(user3)
     client.force_login(user2)
     url = reverse('friendships:friend_list', kwargs={'username': user1.username})
     response = client.get(url)

@@ -25,8 +25,8 @@ def create_group_chat_room_messages(django_user_model):
         password='password'
     )
     # make user1 and user2 friends
-    user1.friendship.add_friend(user2)
-    user2.friendship.add_friend(user1)
+    user1.friendship.friends.add(user2)
+    user2.friendship.friends.add(user1)
     # Create PrivateChatRoom objects
     pcr_obj = PrivateChatRoom.objects.create(name='user1user2')
     pcrm_1 = PrivateChatRoomMessage.objects.create(
