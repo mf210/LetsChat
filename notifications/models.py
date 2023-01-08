@@ -10,18 +10,12 @@ User = get_user_model()
 
 
 class Notification(models.Model):
-    # Who the notification is sent to
-    target = models.ForeignKey(User, on_delete=models.CASCADE)
-    # The user that the creation of the notification was triggered by.
-    from_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="from_user")
-    redirect_url = models.URLField(max_length=500, blank=True, help_text="The URL to be visited when a notification is clicked.")
-    # statement describing the notification (ex: "Mitch sent you a friend request")
+    """Notification Model with A generic type that can refer to a FriendRequest, Unread Message, or any other type of notification"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     verb = models.CharField(max_length=255, blank=True)
-    # When the notification was created/updated
     timestamp = models.DateTimeField(auto_now_add=True)
-    # Some notifications can be marked as "read". (I used "read" instead of "active". I think its more appropriate)
-    read = models.BooleanField(default=False)
-    # A generic type that can refer to a FriendRequest, Unread Message, or any other type of "Notification"
+    is_read = models.BooleanField(default=False)
+    
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
