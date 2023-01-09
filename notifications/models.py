@@ -24,6 +24,7 @@ class Notification(models.Model):
         return self.verb
 
     class Meta:
+        ordering = ['-timestamp']
         indexes = [
             models.Index(fields=["content_type", "object_id"]),
         ]
