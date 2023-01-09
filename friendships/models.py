@@ -12,6 +12,7 @@ User = get_user_model()
 class Friendship(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     friends = models.ManyToManyField(User, blank=True, related_name='friendships')
+    notifications = GenericRelation(Notification)
 
     def __str__(self):
         return self.user.username

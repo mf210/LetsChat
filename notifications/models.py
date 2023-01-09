@@ -11,7 +11,7 @@ User = get_user_model()
 
 class Notification(models.Model):
     """Notification Model with A generic type that can refer to a FriendRequest, Unread Message, or any other type of notification"""
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     verb = models.CharField(max_length=255, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
@@ -23,5 +23,7 @@ class Notification(models.Model):
     def __str__(self):
         return self.verb
 
-    def get_content_object_type(self):
-        return str(self.content_object.get_cname)
+    class Meta:
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+        ]
