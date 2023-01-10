@@ -58,7 +58,7 @@ function appendGeneralNotification(notification, insertDown=true){
             break;
 
         default:
-            console.error(`Unkonwn notification content type!`);
+            console.error(`Unkonwn notification content_type!`);
     }
 }
 
@@ -107,11 +107,36 @@ function createGeneralProfileImageThumbnail(notification){
     Timestamp at the bottom of each notification card
 */
 function createGeneralTimestampElement(notification){
+    const notificationTime = notification['timestamp'];
     const timestamp = document.createElement("p");
     timestamp.classList.add("small", "pt-2", "timestamp-text");
-    timestamp.innerHTML = notification['timestamp'];
+    timestamp.setAttribute('isotime', notificationTime);
+    timestamp.innerHTML = dateTimeToYMWDHMS(notificationTime);
     timestamp.id = assignGeneralTimestampId(notification);
     return timestamp;
+}
+/*
+    Calculate the seconds, minutes, hours, days, weeks and ... difference between notification and now datetime
+*/
+function dateTimeToYMWDHMS(datetime) {
+    const startDate = new Date(datetime);
+    const endDate = new Date();
+    const seconds = (endDate.getTime() - startDate.getTime()) / 1000
+    const s = Math.floor(seconds % 60);
+    const m = Math.floor(seconds % 3600 / 60);
+    const h = Math.floor(seconds % (3600*24) / 3600);
+    const d = Math.floor(seconds % ((3600*24)*7) / (3600*24));
+    const w = Math.floor(seconds % ((3600*24)*30) / ((3600*24)*7));
+    const M = Math.floor(seconds % (((3600*24)*30)*12) / ((3600*24)*30));
+    const y = Math.floor(seconds / (((3600*24)*30)*12));
+    const yDisplay = y > 0 ? y + (y == 1 ? " year, ": " years, ") : "";
+    const MDisplay = M > 0 ? M + (M == 1 ? " month, ": " months, ") : "";
+    const wDisplay = w > 0 ? w + (w == 1 ? " week, ": " weeks, ") : "";
+    const dDisplay = d > 0 ? d + (d == 1 ? " day, " : " days, ") : "";
+    const hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+    const mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+    const sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+    return yDisplay + MDisplay + wDisplay + dDisplay + hDisplay + mDisplay + sDisplay;
 }
 
 //  Helpers for generating IDs 
