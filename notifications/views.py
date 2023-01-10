@@ -26,9 +26,9 @@ class GeneralNotificationView(LoginRequiredMixin, View):
                 'verb': notif_obj.verb,
                 'timestamp': notif_obj.timestamp.isoformat(),
                 'is_read': notif_obj.is_read,
-                'content_type': notif_obj.content_type.app_label,
+                'content_type': notif_obj.content_type.app_labeled_name,
                 'content_object_id': notif_obj.content_object.id,
-                'notif_id': notif_obj.id,
+                'notification_id': notif_obj.id,
             })
         return HttpResponse(json.dumps(data), content_type="application/json")
     

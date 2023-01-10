@@ -15,17 +15,20 @@ User = get_user_model()
 class HandleFriendRequestView(LoginRequiredMixin, View):
     """Accept, Decline or cancel friend request"""
     def post(self, request, *args, **kwargs):
-        friend_req_obj = get_object_or_404(FriendRequest, id=kwargs.get('pk'), receiver=request.user)
+        user = request.user
+        friend_req_obj = get_object_or_404(FriendRequest, id=kwargs.get('pk'), receiver=user)
         accept = True if request.POST.get('accept') == 'true' else False
+        sender = friend_req_obj.sender
         if accept:
             friend_req_obj.accept()
+            sender_msg = f"{user} accept your friend request!"
             message = 'Friend request accepted!'
         else:
             friend_req_obj.delete()
+            sender_msg = f"{user} didn't accept your friend request!"
             message = 'Friend request Cancelled!'
-
+        user.friendship.notifications.create(user=sender, verb=sender_msg)
         return HttpResponse(message)
-
 
 class SendFriendRequestView(LoginRequiredMixin, View):
     """Send friend request"""
