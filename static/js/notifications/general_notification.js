@@ -2,6 +2,7 @@
 const notificationContainer = document.getElementById("id_general_notifications_container");
 
 
+// WebSockets
 const notificationSocket = new WebSocket(
     'ws://'
     + window.location.host
@@ -22,6 +23,7 @@ notificationSocket.onclose = function(e) {
     console.error('notification socket closed.');
 };
 
+// Fetching Data
 (function getGeneralNotifications(){
     const earliestNotif = notificationContainer.lastChild;
     const earliestNotifID = earliestNotif ? earliestNotif.id : null;
@@ -39,14 +41,14 @@ notificationSocket.onclose = function(e) {
 /*
     The card that each notification sits in
 */
-function createGeneralNotificationCard(cardId){
+function createGeneralNotificationCard(){
     const card = document.createElement("div");
     card.classList.add("d-flex", "flex-column", "align-items-start", "general-card", "p-4");
     return card;
 }
 
 /*
-    Append a general notification to the TOP of the list.
+    Append a general notification to the list.
 */
 function appendGeneralNotification(notification, insertDown=true){
     switch(notification['content_type']) {
@@ -67,12 +69,12 @@ function createFriendshipElement(notification){
         console.log(`${notification['notification_id']} notification clicked!`);
     })
 
-    var div1 = document.createElement("div");
+    const div1 = document.createElement("div");
     div1.classList.add("d-flex", "flex-row", "align-items-start");
     div1.id = assignGeneralDiv1Id(notification);
 
-    // img = createGeneralProfileImageThumbnail(notification);
-    // div1.appendChild(img);
+    img = createGeneralProfileImageThumbnail(notification);
+    div1.appendChild(img);
 
     span = document.createElement("span")
     span.classList.add("align-items-start", "pt-1", "m-auto");
@@ -82,7 +84,7 @@ function createFriendshipElement(notification){
     else{
         span.innerHTML = notification['verb'];
     }
-    span.id = assignGeneralVerbId(notification)
+    span.id = assignGeneralVerbId(notification);
     div1.appendChild(span);
     card.appendChild(div1);
     // card.appendChild(createGeneralTimestampElement(notification))
@@ -90,6 +92,27 @@ function createFriendshipElement(notification){
 }
 
 
+/*
+    Circular image icon that can be in a notification card
+*/
+function createGeneralProfileImageThumbnail(notification){
+    const img = document.createElement("img");
+    img.classList.add("notification-thumbnail-image", "img-fluid", "rounded-circle", "mr-2");
+    img.src = notification['image_url'];
+    img.id = assignGeneralImgId(notification);
+    return img;
+}
+
+// /*
+//     Timestamp at the bottom of each notification card
+// */
+// function createGeneralTimestampElement(notification){
+//     const timestamp = document.createElement("p")
+//     timestamp.classList.add("small", "pt-2", "timestamp-text")
+//     timestamp.innerHTML = notification['timestamp']
+//     timestamp.id = assignGeneralTimestampId(notification)
+//     return timestamp
+// }
 
 //  Helpers for generating IDs 
 function assignGeneralDiv1Id(notification){
