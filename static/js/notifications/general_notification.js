@@ -87,7 +87,7 @@ function createFriendshipElement(notification){
     span.id = assignGeneralVerbId(notification);
     div1.appendChild(span);
     card.appendChild(div1);
-    // card.appendChild(createGeneralTimestampElement(notification))
+    card.appendChild(createGeneralTimestampElement(notification));
     return card;
 }
 
@@ -103,16 +103,16 @@ function createGeneralProfileImageThumbnail(notification){
     return img;
 }
 
-// /*
-//     Timestamp at the bottom of each notification card
-// */
-// function createGeneralTimestampElement(notification){
-//     const timestamp = document.createElement("p")
-//     timestamp.classList.add("small", "pt-2", "timestamp-text")
-//     timestamp.innerHTML = notification['timestamp']
-//     timestamp.id = assignGeneralTimestampId(notification)
-//     return timestamp
-// }
+/*
+    Timestamp at the bottom of each notification card
+*/
+function createGeneralTimestampElement(notification){
+    const timestamp = document.createElement("p");
+    timestamp.classList.add("small", "pt-2", "timestamp-text");
+    timestamp.innerHTML = notification['timestamp'];
+    timestamp.id = assignGeneralTimestampId(notification);
+    return timestamp;
+}
 
 //  Helpers for generating IDs 
 function assignGeneralDiv1Id(notification){
