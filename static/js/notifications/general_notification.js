@@ -31,7 +31,7 @@ notificationSocket.onclose = function(e) {
     fetch(url)
     .then((response) => response.json())
     .then((data) => {
-        data.forEach(obj => appendGeneralNotification(obj, insertDown=false));
+        data.forEach(obj => appendGeneralNotification(obj));
     })
     .catch((error) => {
         console.error('Error:', error);
@@ -50,11 +50,11 @@ function createGeneralNotificationCard(){
 /*
     Append a general notification to the list.
 */
-function appendGeneralNotification(notification, insertDown=true){
+function appendGeneralNotification(notification){
     switch(notification['content_type']) {
         case "friendships | friendship":
             card = createFriendshipElement(notification);
-            notificationContainer.insertBefore(card, notificationContainer.childNodes[0]);
+            notificationContainer.appendChild(card);
             break;
 
         default:

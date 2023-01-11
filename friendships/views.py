@@ -26,7 +26,7 @@ class HandleFriendRequestView(LoginRequiredMixin, View):
         else:
             friend_req_obj.delete()
             sender_msg = f"{user} didn't accept your friend request!"
-            message = 'Friend request Cancelled!'
+            message = 'Friend request declined!'
         user.friendship.notifications.create(user=sender, verb=sender_msg)
         return HttpResponse(message)
 
@@ -69,6 +69,10 @@ class UnfriendView(LoginRequiredMixin, View):
             pk=request.POST.get('pk')
         )
         request.user.friendship.unfriend(user)
+        request.user.friendship.notifications.create(
+            user=user,
+            verb=f"{request.user} unfriended you!"
+        )
         return HttpResponse(f'{user} removed from your friends list')
 
 
