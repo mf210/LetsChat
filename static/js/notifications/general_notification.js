@@ -121,7 +121,7 @@ function createGeneralTimestampElement(notification){
 function dateTimeToYMWDHMS(datetime) {
     const startDate = new Date(datetime);
     const endDate = new Date();
-    const seconds = (endDate.getTime() - startDate.getTime()) / 1000
+    const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
     const s = Math.floor(seconds % 60);
     const m = Math.floor(seconds % 3600 / 60);
     const h = Math.floor(seconds % (3600*24) / 3600);
@@ -138,6 +138,18 @@ function dateTimeToYMWDHMS(datetime) {
     const sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
     return yDisplay + MDisplay + wDisplay + dDisplay + hDisplay + mDisplay + sDisplay;
 }
+
+/*
+    Update time of notification cards repeatedly every 5 seconds
+*/
+function updateNotificationsTime() {
+    let listItems = document.querySelectorAll('.timestamp-text');
+    listItems = Array.from(listItems);
+    listItems.forEach(item => {
+        item.innerHTML = dateTimeToYMWDHMS(item.getAttribute('isotime'));
+    })
+}
+setInterval(updateNotificationsTime, 5000);
 
 //  Helpers for generating IDs 
 function assignGeneralDiv1Id(notification){
