@@ -26,6 +26,7 @@ class GeneralNotificationView(LoginRequiredMixin, View):
                 'verb': notif_obj.verb,
                 'timestamp': notif_obj.timestamp.isoformat(),
                 'is_read': notif_obj.is_read,
+                'profile_url': notif_obj.content_object.user.get_absolute_url(),
                 'image_url': notif_obj.content_object.user.profile_image.url,
                 'content_type': notif_obj.content_type.app_labeled_name,
                 'content_object_id': notif_obj.content_object.id,

@@ -66,7 +66,7 @@ function createFriendshipElement(notification){
     card = createGeneralNotificationCard();
     card.id = assignGeneralCardId(notification);
     card.addEventListener("click", function(){
-        console.log(`${notification['notification_id']} notification clicked!`);
+        window.location.href = notification['profile_url'];
     })
 
     const div1 = document.createElement("div");
