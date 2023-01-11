@@ -1,6 +1,12 @@
 // Vars
 const notificationContainer = document.getElementById("id_general_notifications_container");
 
+// Get Cookie by name
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
 
 // WebSockets
 const notificationSocket = new WebSocket(
@@ -56,6 +62,10 @@ function appendGeneralNotification(notification){
             card = createFriendshipElement(notification);
             notificationContainer.appendChild(card);
             break;
+        case "friendships | friend request":
+            card = createFriendRequestElement(notification);
+            notificationContainer.appendChild(card);
+            break;
 
         default:
             console.error(`Unkonwn notification content_type!`);
@@ -91,6 +101,82 @@ function createFriendshipElement(notification){
     return card;
 }
 
+/*
+    Create a Notification Card for a FriendRequest payload
+*/
+function createFriendRequestElement(notification){
+    card = createGeneralNotificationCard()
+    card.id = assignGeneralCardId(notification)
+    card.addEventListener("click", function(){
+        window.location.href = notification['profile_url'];
+    })
+
+    div1 = document.createElement("div")
+    div1.classList.add("d-flex", "flex-row", "align-items-start")
+    div1.id = assignGeneralDiv1Id(notification)
+    
+    img = createGeneralProfileImageThumbnail(notification)
+    div1.appendChild(img)
+
+    span = document.createElement("span")
+    span.classList.add("m-auto")
+    span.innerHTML = notification['verb']
+    span.id = assignGeneralVerbId(notification)
+    div1.appendChild(span)
+    card.appendChild(div1)
+
+    div2 = document.createElement("div")
+    div2.classList.add("d-flex", "flex-row", "mt-2")
+    div2.id = assignGeneralDiv2Id(notification)
+
+    pos_action = document.createElement("a")
+    pos_action.classList.add("btn", "btn-primary", "mr-2")
+    // pos_action.href = "#"
+    pos_action.innerHTML = "Accept"
+    pos_action.addEventListener("click", function(e){
+        e.stopPropagation();
+        handleFriendRequest(notification['content_object_id'], accept=true, card.id);
+    })
+    pos_action.id = assignGeneralPosActionId(notification)
+    div2.appendChild(pos_action)
+
+    neg_action = document.createElement("a")
+    neg_action.classList.add("btn", "btn-secondary")
+    // neg_action.href = "#"
+    neg_action.innerHTML = "Decline"
+    neg_action.addEventListener("click", function(e){
+        e.stopPropagation();
+        handleFriendRequest(notification['content_object_id'], accept=false, card.id);
+    })
+    neg_action.id = assignGeneralNegActionId(notification)
+    div2.appendChild(neg_action)
+    card.appendChild(div2)
+
+    card.appendChild(createGeneralTimestampElement(notification))
+    return card
+}
+
+// Handle Friend Request
+function handleFriendRequest(requestID, accept, cardID){
+    url = `/friendships/handle_friend_request/${requestID}/`;
+    let data = new FormData();
+    data.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+    data.append('accept', accept);
+    fetch(url, 
+        {
+            method: 'POST',
+            body: data
+        },
+    )
+    .then((response) => response.text())
+    .then((data) => {
+        location.reload();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+    document.getElementById(cardID).remove();
+}
 
 /*
     Circular image icon that can be in a notification card

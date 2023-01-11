@@ -18,7 +18,7 @@ class GeneralNotificationView(LoginRequiredMixin, View):
             earliest_notif = all_general_notifs.get(id=earliest_notif_id)
             notifs_list = all_general_notifs.filter(timestamp__lt=earliest_notif.timestamp)
         except (Notification.DoesNotExist, ValueError):
-            notifs_list = request.user.notifications.all()
+            notifs_list = all_general_notifs
         # prepare data for sending
         data = []
         for notif_obj in notifs_list[:5]:
