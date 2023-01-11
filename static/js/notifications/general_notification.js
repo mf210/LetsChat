@@ -1,4 +1,5 @@
 // Vars
+let canUserLoadGeneralNotifications = true;
 const notificationContainer = document.getElementById("id_general_notifications_container");
 
 // Get Cookie by name
@@ -38,9 +39,11 @@ function getGeneralNotifications(){
     .then((response) => response.json())
     .then((data) => {
         data.forEach(obj => appendGeneralNotification(obj));
+        canUserLoadGeneralNotifications = true;
     })
     .catch((error) => {
         console.error('Error:', error);
+        canUserLoadGeneralNotifications = true;
     });
 }
 getGeneralNotifications();
@@ -244,7 +247,8 @@ setInterval(updateNotificationsTime, 5000);
 */
 const menu = document.getElementById("id_general_notifications_container")
 menu.addEventListener("scroll", function(e){
-    if ((menu.scrollTop) >= (menu.scrollHeight - menu.offsetHeight)) {
+    if ((menu.scrollTop) >= (menu.scrollHeight - menu.offsetHeight) && canUserLoadGeneralNotifications) {
+        canUserLoadGeneralNotifications = false;
         getGeneralNotifications();
     }
 });
