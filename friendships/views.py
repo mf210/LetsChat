@@ -42,7 +42,11 @@ class SendFriendRequestView(LoginRequiredMixin, View):
             status = HTTPStatus.CONFLICT
             message = f'Come on! you have sent a request to {receiver.username} before'
         else:
-            FriendRequest.objects.create(sender=request.user, receiver=receiver)
+            friend_req_obj = FriendRequest.objects.create(sender=request.user, receiver=receiver)
+            friend_req_obj.notifications.create(
+                user=receiver,
+                verb=f"{request.user} sent you a friend request, do you wanna accept?"
+            )
             status = HTTPStatus.OK
             message = 'Request sent successfully!'
 
