@@ -30,9 +30,9 @@ notificationSocket.onclose = function(e) {
 };
 
 // Fetching Data
-(function getGeneralNotifications(){
+function getGeneralNotifications(){
     const earliestNotif = notificationContainer.lastChild;
-    const earliestNotifID = earliestNotif ? earliestNotif.id : null;
+    const earliestNotifID = earliestNotif ? earliestNotif.id.slice(24) : null;
     const url = `/notifications/general/?earliest_notif_id=${earliestNotifID}`;
     fetch(url)
     .then((response) => response.json())
@@ -42,7 +42,8 @@ notificationSocket.onclose = function(e) {
     .catch((error) => {
         console.error('Error:', error);
     });
-})()
+}
+getGeneralNotifications();
 
 /*
     The card that each notification sits in
@@ -236,6 +237,17 @@ function updateNotificationsTime() {
     })
 }
 setInterval(updateNotificationsTime, 5000);
+
+/*
+    Sets the scroll listener for when user scrolls to bottom of notification menu.
+    It will retrieve the next page of results.
+*/
+const menu = document.getElementById("id_general_notifications_container")
+menu.addEventListener("scroll", function(e){
+    if ((menu.scrollTop) >= (menu.scrollHeight - menu.offsetHeight)) {
+        getGeneralNotifications();
+    }
+});
 
 //  Helpers for generating IDs 
 function assignGeneralDiv1Id(notification){
