@@ -17,3 +17,8 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
     async def disconnect(self, close_code):
         # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+
+    # Receive message from room group
+    async def general_notification(self, event):
+        # Send message to WebSocket
+        await self.send_json(event)

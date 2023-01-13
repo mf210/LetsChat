@@ -5,11 +5,14 @@ from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from .models import FriendRequest
 
 
 User = get_user_model()
+channel_layer = get_channel_layer()
 
 
 class HandleFriendRequestView(LoginRequiredMixin, View):
@@ -43,10 +46,11 @@ class SendFriendRequestView(LoginRequiredMixin, View):
             message = f'Come on! you have sent a request to {receiver.username} before'
         else:
             friend_req_obj = FriendRequest.objects.create(sender=request.user, receiver=receiver)
-            friend_req_obj.notifications.create(
+            notification = friend_req_obj.notifications.create(
                 user=receiver,
                 verb=f"{request.user} sent you a friend request, do you wanna accept?"
             )
+            send_notification_via_websocket(notification)
             status = HTTPStatus.OK
             message = 'Request sent successfully!'
 
@@ -94,3 +98,25 @@ class FriendListView(LoginRequiredMixin, View):
             'page_range': paginator.get_elided_page_range(page_obj.number),
         }
         return render(request, 'friendships/friend_list.html', context)
+
+
+def send_notification_via_websocket(notification):
+    content_type = notification.content_type.app_labeled_name
+    if content_type == 'friendships | friendship':
+        sender = notification.content_object.user
+    elif content_type == 'friendships | friend request':
+        sender = notification.content_object.sender
+    data = {
+        'verb': notification.verb,
+        'timestamp': notification.timestamp.isoformat(),
+        'is_read': notification.is_read,
+        'profile_url': sender.get_absolute_url(),
+        'image_url': sender.profile_image.url,
+        'content_type': content_type,
+        'content_object_id': notification.content_object.id,
+        'notification_id': notification.id,
+    }
+    async_to_sync(channel_layer.group_send)(
+        f'notification_{notification.user.username}',
+        {'type': 'general_notification', 'notification': data}
+    )

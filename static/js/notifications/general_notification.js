@@ -19,7 +19,9 @@ const notificationSocket = new WebSocket(
 notificationSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     const msgType = data['type'];
-    console.log(`new message: ${msgType}`);
+    if (msgType === 'general_notification') {
+        appendGeneralNotification(data['notification'], insertDown=false);
+    }
 };
 
 notificationSocket.onopen = function(e) {
@@ -60,19 +62,23 @@ function createGeneralNotificationCard(){
 /*
     Append a general notification to the list.
 */
-function appendGeneralNotification(notification){
+function appendGeneralNotification(notification, insertDown=true){
     switch(notification['content_type']) {
         case "friendships | friendship":
             card = createFriendshipElement(notification);
-            notificationContainer.appendChild(card);
             break;
         case "friendships | friend request":
             card = createFriendRequestElement(notification);
-            notificationContainer.appendChild(card);
             break;
 
         default:
             console.error(`Unkonwn notification content_type!`);
+            console.log(notification['content_type'])
+    }
+    if (insertDown) {
+        notificationContainer.appendChild(card);
+    } else {
+        notificationContainer.insertBefore(card, notificationContainer.firstChild);
     }
 }
 
