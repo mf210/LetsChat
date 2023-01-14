@@ -30,6 +30,8 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                     "count": await self.user.notifications.filter(is_read=False).acount(),
                 }
             )
+        if command == 'mark_notifications_read':
+            await self.user.notifications.filter(is_read=False).aupdate(is_read=True)
 
     # Receive message from room group
     async def general_notification(self, event):

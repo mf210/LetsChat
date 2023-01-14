@@ -1,6 +1,8 @@
 // Vars
-let canUserLoadGeneralNotifications = true;
 const notificationContainer = document.getElementById("id_general_notifications_container");
+const generalNotificationsCountElement = document.getElementById("id_general_notifications_count")
+let canUserLoadGeneralNotifications = true;
+let unreadGeneralNotificationsCount = 0;
 
 // Get Cookie by name
 function getCookie(name) {
@@ -22,7 +24,8 @@ notificationSocket.onmessage = function(e) {
     if (command === 'append_new_notification') {
         appendGeneralNotification(data['notification'], insertDown=false);
     } else if (command === 'set_unread_general_notifications_count') {
-        setUnreadGeneralNotificationsCount(data['count']);
+        unreadGeneralNotificationsCount = data['count']
+        setUnreadGeneralNotificationsCount();
     }
 };
 
@@ -265,18 +268,33 @@ menu.addEventListener("scroll", function(e){
 /*
     Set the number of unread notifications.
 */
-function setUnreadGeneralNotificationsCount(count){
-    var countElement = document.getElementById("id_general_notifications_count")
-    if(count > 0){
-        countElement.style.background = "red"
-        countElement.style.display = "block"
-        countElement.innerHTML = count
+function setUnreadGeneralNotificationsCount(){
+    if(unreadGeneralNotificationsCount > 0){
+        generalNotificationsCountElement.style.background = "red"
+        generalNotificationsCountElement.style.display = "block"
+        generalNotificationsCountElement.innerHTML = unreadGeneralNotificationsCount
     }
     else{
-        countElement.style.background = "transparent"
-        countElement.style.display = "none"
+        generalNotificationsCountElement.style.background = "transparent"
+        generalNotificationsCountElement.style.display = "none"
     }
 }
+
+/*
+    Sets all the notifications currently visible as "read"
+*/
+function setGeneralNotificationsAsRead(){
+    notificationSocket.send(JSON.stringify({
+        "command": "mark_notifications_read",
+    }));
+    unreadGeneralNotificationsCount = 0;
+    setUnreadGeneralNotificationsCount();
+}
+
+// Event listeners
+document.getElementById('id_notification_dropdown_toggle').addEventListener('click', e => {
+    setGeneralNotificationsAsRead();
+})
 
 //  Helpers for generating IDs 
 function assignGeneralDiv1Id(notification){
