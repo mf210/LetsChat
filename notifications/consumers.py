@@ -18,6 +18,19 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
+    # Receive message from WebSocket
+    async def receive_json(self, content, **kwargs):
+        command = content.get('command')
+        if command == 'get_unread_general_notifications_count':
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "general_notification",
+                    "command": "set_unread_general_notifications_count",
+                    "count": await self.user.notifications.filter(is_read=False).acount(),
+                }
+            )
+
     # Receive message from room group
     async def general_notification(self, event):
         # Send message to WebSocket

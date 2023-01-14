@@ -120,5 +120,9 @@ def send_notification_via_websocket(notification):
     }
     async_to_sync(channel_layer.group_send)(
         f'notification_{notification.user.username}',
-        {'type': 'general_notification', 'notification': data}
+        {
+            'type': 'general_notification',
+            'command': 'append_new_notification',
+            'notification': data,
+        }
     )

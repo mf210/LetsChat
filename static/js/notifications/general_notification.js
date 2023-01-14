@@ -18,14 +18,18 @@ const notificationSocket = new WebSocket(
 
 notificationSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
-    const msgType = data['type'];
-    if (msgType === 'general_notification') {
+    const command = data['command'];
+    if (command === 'append_new_notification') {
         appendGeneralNotification(data['notification'], insertDown=false);
+    } else if (command === 'set_unread_general_notifications_count') {
+        setUnreadGeneralNotificationsCount(data['count']);
     }
 };
 
 notificationSocket.onopen = function(e) {
-    console.log('notification socket is open now!');
+    notificationSocket.send(JSON.stringify({
+        'command': 'get_unread_general_notifications_count'
+    }))    
 };
 
 notificationSocket.onclose = function(e) {
@@ -72,8 +76,7 @@ function appendGeneralNotification(notification, insertDown=true){
             break;
 
         default:
-            console.error(`Unkonwn notification content_type!`);
-            console.log(notification['content_type'])
+            console.error(`Unkonwn notification content_type: ${notification['content_type']}`);
     }
     if (insertDown) {
         notificationContainer.appendChild(card);
@@ -258,6 +261,22 @@ menu.addEventListener("scroll", function(e){
         getGeneralNotifications();
     }
 });
+
+/*
+    Set the number of unread notifications.
+*/
+function setUnreadGeneralNotificationsCount(count){
+    var countElement = document.getElementById("id_general_notifications_count")
+    if(count > 0){
+        countElement.style.background = "red"
+        countElement.style.display = "block"
+        countElement.innerHTML = count
+    }
+    else{
+        countElement.style.background = "transparent"
+        countElement.style.display = "none"
+    }
+}
 
 //  Helpers for generating IDs 
 function assignGeneralDiv1Id(notification){
