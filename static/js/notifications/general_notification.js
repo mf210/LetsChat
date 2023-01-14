@@ -23,10 +23,11 @@ notificationSocket.onmessage = function(e) {
     const command = data['command'];
     if (command === 'append_new_notification') {
         appendGeneralNotification(data['notification'], insertDown=false);
+        unreadGeneralNotificationsCount += 1;
     } else if (command === 'set_unread_general_notifications_count') {
         unreadGeneralNotificationsCount = data['count']
-        setUnreadGeneralNotificationsCount();
     }
+    setUnreadGeneralNotificationsCount();
 };
 
 notificationSocket.onopen = function(e) {
