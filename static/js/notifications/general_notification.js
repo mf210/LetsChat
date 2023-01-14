@@ -26,6 +26,12 @@ notificationSocket.onmessage = function(e) {
         unreadGeneralNotificationsCount += 1;
     } else if (command === 'set_unread_general_notifications_count') {
         unreadGeneralNotificationsCount = data['count']
+    } else if (command === 'remove_friendrequest_notification') {
+        unreadGeneralNotificationsCount -= unreadGeneralNotificationsCount > 0 ? 1 : 0;
+        const notificationCard = document.getElementById(assignGeneralCardId(data));
+        if (notificationCard) {
+            notificationCard.remove();
+        }
     }
     setUnreadGeneralNotificationsCount();
 };

@@ -66,6 +66,14 @@ class CancelFriendRequestView(LoginRequiredMixin, View):
             request.user.sent_friend_reqs,
             pk=friend_req_pk
         )
+        async_to_sync(channel_layer.group_send)(
+        f'notification_{friend_req_obj.receiver.username}',
+        {
+            'type': 'general_notification',
+            'command': 'remove_friendrequest_notification',
+            'notification_id': friend_req_obj.notifications.get(object_id=friend_req_pk).id,
+        }
+        )
         friend_req_obj.delete()
         return HttpResponse('Request cancelled successfully!')
 
