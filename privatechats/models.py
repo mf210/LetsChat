@@ -31,3 +31,20 @@ class PrivateChatRoomMessage(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+
+class UnreadPrivateChatMessages(models.Model):
+    """
+    Keep track of the number of unread messages by a specific user in a specific private chat.
+    """
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='unread_private_messages'
+    )
+    room = models.ForeignKey(
+        PrivateChatRoom, on_delete=models.CASCADE, related_name='unread_private_messages'
+    )
+    count = models.IntegerField(default=0)
+    most_recent_message = models.CharField(max_length=500, blank=True)
+
+    def __str__(self):
+        return f"{self.count} unread messages"
