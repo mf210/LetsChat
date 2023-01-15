@@ -52,7 +52,10 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 )
                 if not created:
                     upcm_obj.count += 1
-                    await database_sync_to_async(upcm_obj.save)(update_fields=['count'])
+                    upcm_obj.most_recent_message = message[:50]
+                    await database_sync_to_async(upcm_obj.save)(
+                        update_fields=['count', 'most_recent_message']
+                    )
             # Send message to room group
             await self.channel_layer.group_send(
                 self.room_group_name,
