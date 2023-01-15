@@ -1,12 +1,17 @@
+from collections import defaultdict
+
 from django.contrib.auth import get_user_model
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 
-from .models import PrivateChatRoom, PrivateChatRoomMessage
+from .models import PrivateChatRoom, PrivateChatRoomMessage, UnreadPrivateChatMessages
+
+
 
 
 
 User = get_user_model()
+online_users = defaultdict(set)
 
 
 class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
@@ -19,21 +24,35 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             # Join room group
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
+            online_users[self.room_group_name].add(self.user.username)
 
     async def disconnect(self, close_code):
         # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        online_users[self.room_group_name].discard(self.user.username)
 
     # Receive message from WebSocket
     async def receive_json(self, content, **kwargs):
         command = content.get('command')
         message = content.get('message', '').strip()
         if command == 'send' and message:
+            # save message
             pcrm_obj = await PrivateChatRoomMessage.objects.acreate(
                 user=self.user,
                 room=self.pcr_obj,
                 content=message
             )
+            # Increment the number of unread messages if roommate is not in this chat-room
+            # TODO: I think "if len(online_users[self.room_group_name]) == 1" is faster but it's not so readable
+            if self.roommate_name not in online_users[self.room_group_name]:
+                upcm_obj, created = await UnreadPrivateChatMessages.objects.aget_or_create(
+                    user=self.roommate,
+                    room=self.pcr_obj,
+                    defaults={'most_recent_message': message[:50]}
+                )
+                if not created:
+                    upcm_obj.count += 1
+                    await database_sync_to_async(upcm_obj.save)(update_fields=['count'])
             # Send message to room group
             await self.channel_layer.group_send(
                 self.room_group_name,
