@@ -48,11 +48,11 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 upcm_obj, created = await UnreadPrivateChatMessages.objects.aget_or_create(
                     user=self.roommate,
                     room=self.pcr_obj,
-                    defaults={'most_recent_message': message[:50]}
+                    defaults={'most_recent_message': pcrm_obj}
                 )
                 if not created:
                     upcm_obj.count += 1
-                    upcm_obj.most_recent_message = message[:50]
+                    upcm_obj.most_recent_message = pcrm_obj
                     await database_sync_to_async(upcm_obj.save)(
                         update_fields=['count', 'most_recent_message']
                     )

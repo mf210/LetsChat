@@ -54,3 +54,20 @@ class PrivateChatRoomMessageView(LoginRequiredMixin, View):
                 'msg_id': msg_obj.id,
             })
         return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+class UnreadPrivateChatMessagesView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        unread_private_messages = request.user.unread_private_messages.filter(count__gt=0)
+        data = []
+        for upm in unread_private_messages:
+            data.append({
+                'id': upm.id,
+                'count': upm.count,
+                'most_recent_message': upm.most_recent_message.content,
+                'most_recent_message_timestamp': upm.most_recent_message.timestamp.isoformat(),
+                'sender_username': upm.most_recent_message.user.username,
+                'sender_profile_image': upm.most_recent_message.user.profile_image.url,
+            })
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
