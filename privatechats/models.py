@@ -43,8 +43,8 @@ class UnreadPrivateChatMessages(models.Model):
     room = models.ForeignKey(
         PrivateChatRoom, on_delete=models.CASCADE, related_name='unread_private_messages'
     )
+    most_recent_message = models.ForeignKey(PrivateChatRoomMessage, on_delete=models.CASCADE)
     count = models.IntegerField(default=1)
-    most_recent_message = models.CharField(max_length=500, blank=True)
 
     def __str__(self):
         return f"{self.count} unread messages"
