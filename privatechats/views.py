@@ -65,7 +65,7 @@ class UnreadPrivateChatMessagesView(LoginRequiredMixin, View):
                 'id': upm.id,
                 'count': upm.count,
                 'most_recent_message': upm.most_recent_message.content,
-                'most_recent_message_timestamp': upm.most_recent_message.timestamp.isoformat(),
+                'most_recent_message_timestamp': upm.timestamp.isoformat(),
                 'sender_username': upm.most_recent_message.user.username,
                 'sender_profile_image': upm.most_recent_message.user.profile_image.url,
             })

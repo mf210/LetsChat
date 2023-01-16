@@ -65,7 +65,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                             'id': upcm_obj.id,
                             'count': upcm_obj.count,
                             'most_recent_message': upcm_obj.most_recent_message.content,
-                            'most_recent_message_timestamp': upcm_obj.most_recent_message.timestamp.isoformat(),
+                            'most_recent_message_timestamp': upcm_obj.timestamp.isoformat(),
                             'sender_username': upcm_obj.most_recent_message.user.username,
                             'sender_profile_image': upcm_obj.most_recent_message.user.profile_image.url,
                         }

@@ -45,6 +45,10 @@ class UnreadPrivateChatMessages(models.Model):
     )
     most_recent_message = models.ForeignKey(PrivateChatRoomMessage, on_delete=models.CASCADE)
     count = models.IntegerField(default=1)
+    timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.count} unread messages"
+
+    class Meta:
+        ordering = ['-timestamp']
