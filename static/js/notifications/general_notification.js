@@ -33,6 +33,12 @@ notificationSocket.onmessage = function(e) {
         if (notificationCard) {
             notificationCard.remove();
         }
+    } else if (command === 'append_new_chat_notification'){
+        const chatNotificationCard = document.getElementById(`id_chat_notification_${data['notification']['id']}`);
+        if (chatNotificationCard) {
+            chatNotificationCard.remove();
+        }
+        appendUnreadPrivateChatMessagesNotification(data['notification'], insertDown=false);
     }
     setUnreadGeneralNotificationsCount();
 };

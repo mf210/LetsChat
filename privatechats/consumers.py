@@ -56,6 +56,21 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                     await database_sync_to_async(upcm_obj.save)(
                         update_fields=['count', 'most_recent_message']
                     )
+                await self.channel_layer.group_send(
+                    f'notification_{self.roommate_name}',
+                    {
+                        'type': 'general_notification',
+                        'command': 'append_new_chat_notification',
+                        'notification': {
+                            'id': upcm_obj.id,
+                            'count': upcm_obj.count,
+                            'most_recent_message': upcm_obj.most_recent_message.content,
+                            'most_recent_message_timestamp': upcm_obj.most_recent_message.timestamp.isoformat(),
+                            'sender_username': upcm_obj.most_recent_message.user.username,
+                            'sender_profile_image': upcm_obj.most_recent_message.user.profile_image.url,
+                        }
+                    }
+                )
             # Send message to room group
             await self.channel_layer.group_send(
                 self.room_group_name,
