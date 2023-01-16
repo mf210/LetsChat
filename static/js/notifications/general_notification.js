@@ -1,6 +1,7 @@
 // Vars
 const notificationContainer = document.getElementById("id_general_notifications_container");
-const generalNotificationsCountElement = document.getElementById("id_general_notifications_count")
+const generalNotificationsCountElement = document.getElementById("id_general_notifications_count");
+const chatNotificationContainer = document.getElementById("id_chat_notifications_container");
 let canUserLoadGeneralNotifications = true;
 let unreadGeneralNotificationsCount = 0;
 
@@ -64,6 +65,20 @@ function getGeneralNotifications(){
 }
 getGeneralNotifications();
 
+function getUnreadPrivateChatMessagesNotification(){
+    fetch('/privatechats/unread_messages/')
+    .then((response) => response.json())
+    .then((data) => {
+        data.forEach(obj => appendUnreadPrivateChatMessagesNotification(obj));
+        // canUserLoadGeneralNotifications = true;
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        // canUserLoadGeneralNotifications = true;
+    });
+}
+getUnreadPrivateChatMessagesNotification();
+
 /*
     The card that each notification sits in
 */
@@ -95,6 +110,18 @@ function appendGeneralNotification(notification, insertDown=true){
     }
 }
 
+/*
+    Append a unread private chat message notification
+*/
+function appendUnreadPrivateChatMessagesNotification(notification, insertDown=true){
+    const card = createUnreadChatRoomMessagesCard(notification);
+    if (insertDown) {
+        chatNotificationContainer.appendChild(card);
+    } else {
+        chatNotificationContainer.insertBefore(card, chatNotificationContainer.firstChild);
+    }
+}
+
 function createFriendshipElement(notification){
     card = createGeneralNotificationCard();
     card.id = assignGeneralCardId(notification);
@@ -106,7 +133,7 @@ function createFriendshipElement(notification){
     div1.classList.add("d-flex", "flex-row", "align-items-start");
     div1.id = assignGeneralDiv1Id(notification);
 
-    img = createGeneralProfileImageThumbnail(notification);
+    img = createProfileImageThumbnail(notification['image_url']);
     div1.appendChild(img);
 
     span = document.createElement("span")
@@ -120,7 +147,7 @@ function createFriendshipElement(notification){
     span.id = assignGeneralVerbId(notification);
     div1.appendChild(span);
     card.appendChild(div1);
-    card.appendChild(createGeneralTimestampElement(notification));
+    card.appendChild(createGeneralTimestampElement(notification['timestamp']));
     return card;
 }
 
@@ -138,7 +165,7 @@ function createFriendRequestElement(notification){
     div1.classList.add("d-flex", "flex-row", "align-items-start")
     div1.id = assignGeneralDiv1Id(notification)
     
-    img = createGeneralProfileImageThumbnail(notification)
+    img = createProfileImageThumbnail(notification['image_url']);
     div1.appendChild(img)
 
     span = document.createElement("span")
@@ -175,7 +202,56 @@ function createFriendRequestElement(notification){
     div2.appendChild(neg_action)
     card.appendChild(div2)
 
-    card.appendChild(createGeneralTimestampElement(notification))
+    card.appendChild(createGeneralTimestampElement(notification['timestamp']))
+    return card
+}
+
+/*
+    The card that each notification sits in
+*/
+function createChatNotificationCard(){
+    var card = document.createElement("div")
+    card.classList.add("d-flex", "flex-column", "align-items-start", "chat-card", "p-4")
+    return card
+}
+
+function createUnreadChatRoomMessagesCard(notification){
+    card = createChatNotificationCard()
+    card.id = `id_chat_notification_${notification['id']}`
+    card.addEventListener("click", function(){
+        console.log(`chat notification clicked...`)
+    })
+
+    var div1 = document.createElement("div")
+    div1.classList.add("d-flex", "flex-row", "align-items-start")
+    // div1.id = assignChatDiv1Id(notification)
+
+    img = createProfileImageThumbnail(notification['sender_profile_image'])
+    // img.id = assignChatImgId(notification)
+    div1.appendChild(img)
+
+    var div2 = document.createElement("div")
+    div2.classList.add("d-flex", "flex-column")
+    // div2.id = assignChatDiv2Id(notification)
+    
+    var title = document.createElement("span")
+    title.classList.add("align-items-start")
+    title.innerHTML = notification['sender_username']
+    // title.id = assignChatTitleId(notification)
+    div2.appendChild(title)
+
+    var chatRoomMessage = document.createElement("span")
+    // chatRoomMessage.id = assignChatroomMessageId(notification)
+    chatRoomMessage.classList.add("align-items-start", "pt-1", "small", "notification-chatroom-msg")
+    if(notification['most_recent_message'].length > 50){
+        chatRoomMessage.innerHTML = notification['most_recent_message'].slice(0, 50) + "..."
+    } else {
+        chatRoomMessage.innerHTML = notification['most_recent_message']
+    }
+    div2.appendChild(chatRoomMessage)
+    div1.appendChild(div2)
+    card.appendChild(div1)
+    card.appendChild(createGeneralTimestampElement(notification['most_recent_message_timestamp']))
     return card
 }
 
@@ -204,24 +280,23 @@ function handleFriendRequest(requestID, accept, cardID){
 /*
     Circular image icon that can be in a notification card
 */
-function createGeneralProfileImageThumbnail(notification){
+function createProfileImageThumbnail(imageURL){
     const img = document.createElement("img");
     img.classList.add("notification-thumbnail-image", "img-fluid", "rounded-circle", "mr-2");
-    img.src = notification['image_url'];
-    img.id = assignGeneralImgId(notification);
+    img.src = imageURL;
+    // img.id = assignGeneralImgId(notification);
     return img;
 }
 
 /*
     Timestamp at the bottom of each notification card
 */
-function createGeneralTimestampElement(notification){
-    const notificationTime = notification['timestamp'];
+function createGeneralTimestampElement(notificationTimestamp){
     const timestamp = document.createElement("p");
     timestamp.classList.add("small", "pt-2", "timestamp-text");
-    timestamp.setAttribute('isotime', notificationTime);
-    timestamp.innerHTML = dateTimeToYMWDHMS(notificationTime);
-    timestamp.id = assignGeneralTimestampId(notification);
+    timestamp.setAttribute('isotime', notificationTimestamp);
+    timestamp.innerHTML = dateTimeToYMWDHMS(notificationTimestamp);
+    // timestamp.id = assignGeneralTimestampId(notification);
     return timestamp;
 }
 /*
