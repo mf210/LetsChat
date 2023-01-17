@@ -42,35 +42,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 room=self.pcr_obj,
                 content=message
             )
-            # Increment the number of unread messages if roommate is not in this chat-room
-            # TODO: I think "if len(online_users[self.room_group_name]) == 1" is faster but it's not so readable
-            if self.roommate_name not in online_users[self.room_group_name]:
-                upcm_obj, created = await UnreadPrivateChatMessages.objects.aget_or_create(
-                    user=self.roommate,
-                    room=self.pcr_obj,
-                    defaults={'most_recent_message': pcrm_obj}
-                )
-                if not created:
-                    upcm_obj.count += 1
-                    upcm_obj.most_recent_message = pcrm_obj
-                    await database_sync_to_async(upcm_obj.save)(
-                        update_fields=['count', 'most_recent_message']
-                    )
-                await self.channel_layer.group_send(
-                    f'notification_{self.roommate_name}',
-                    {
-                        'type': 'general_notification',
-                        'command': 'append_new_chat_notification',
-                        'notification': {
-                            'id': upcm_obj.id,
-                            'count': upcm_obj.count,
-                            'most_recent_message': upcm_obj.most_recent_message.content,
-                            'most_recent_message_timestamp': upcm_obj.timestamp.isoformat(),
-                            'sender_username': upcm_obj.most_recent_message.user.username,
-                            'sender_profile_image': upcm_obj.most_recent_message.user.profile_image.url,
-                        }
-                    }
-                )
+            await self.keep_track_unread_messages(pcrm_obj)
             # Send message to room group
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -103,3 +75,36 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         except (User.DoesNotExist, PrivateChatRoom.DoesNotExist):
             pass
         return False
+    
+    async def keep_track_unread_messages(self, pcrm_obj):
+        """
+        Increment the number of roommate unread messages if he/she is not in this chat-room
+        """
+        # TODO: I think "if len(online_users[self.room_group_name]) == 1" is faster but it's not so readable
+        if self.roommate_name not in online_users[self.room_group_name]:
+            upcm_obj, created = await UnreadPrivateChatMessages.objects.aget_or_create(
+                user=self.roommate,
+                room=self.pcr_obj,
+                defaults={'most_recent_message': pcrm_obj}
+            )
+            if not created:
+                upcm_obj.count += 1
+                upcm_obj.most_recent_message = pcrm_obj
+                await database_sync_to_async(upcm_obj.save)(
+                    update_fields=['count', 'most_recent_message', 'timestamp']
+                )
+            await self.channel_layer.group_send(
+                f'notification_{self.roommate_name}',
+                {
+                    'type': 'general_notification',
+                    'command': 'append_new_chat_notification',
+                    'notification': {
+                        'id': upcm_obj.id,
+                        'count': upcm_obj.count,
+                        'most_recent_message': pcrm_obj.content,
+                        'most_recent_message_timestamp': upcm_obj.timestamp.isoformat(),
+                        'sender_username': self.user.username,
+                        'sender_profile_image': self.user.profile_image.url,
+                    }
+                }
+            )
