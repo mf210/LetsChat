@@ -65,3 +65,14 @@
     position: absolute;
     margin-top: 40px;
 }
+
+.chat-card:hover{
+    cursor: pointer;
+    background: #f2f2f2;
+}
+.chat-card{
+    border-bottom: 1px solid var(--main-background-color);
+}
+.notification-chatroom-msg{
+    color: var(--light-primary-text-color);
+}
