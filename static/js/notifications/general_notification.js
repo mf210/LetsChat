@@ -25,16 +25,18 @@ notificationSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     const command = data['command'];
     if (command === 'append_new_notification') {
+        unreadGeneralNotificationsCount += 1;
+        setUnreadGeneralNotificationsCount();
         appendGeneralNotification(data['notification'], insertDown=false);
     } else if (command === 'set_unread_general_notifications_count') {
         unreadGeneralNotificationsCount = data['count']
     } else if (command === 'remove_friendrequest_notification') {
         unreadGeneralNotificationsCount -= unreadGeneralNotificationsCount > 0 ? 1 : 0;
+        setUnreadGeneralNotificationsCount();
         const notificationCard = document.getElementById(assignGeneralCardId(data));
         if (notificationCard) {
             notificationCard.remove();
         }
-        setUnreadGeneralNotificationsCount();
     } else if (command === 'append_new_chat_notification'){
         const chatNotificationID = createChatNotificationID(data['notification']['id'])
         const chatNotificationCard = document.getElementById(chatNotificationID);
@@ -117,8 +119,6 @@ function appendGeneralNotification(notification, insertDown=true){
     } else {
         notificationContainer.insertBefore(card, notificationContainer.firstChild);
     }
-    unreadGeneralNotificationsCount += 1;
-    setUnreadGeneralNotificationsCount();
 }
 
 /*
@@ -352,8 +352,7 @@ function setUnreadGeneralNotificationsCount(){
         generalNotificationsCountElement.style.background = "red"
         generalNotificationsCountElement.style.display = "block"
         generalNotificationsCountElement.innerHTML = unreadGeneralNotificationsCount
-    }
-    else{
+    } else {
         generalNotificationsCountElement.style.background = "transparent"
         generalNotificationsCountElement.style.display = "none"
     }
@@ -364,8 +363,7 @@ function setUnreadChatNotificationsCount(){
         chatNotificationsCountElement.style.background = "red"
         chatNotificationsCountElement.style.display = "block"
         chatNotificationsCountElement.innerHTML = unreadChatNotificationsCount
-    }
-    else{
+    } else {
         chatNotificationsCountElement.style.background = "transparent"
         chatNotificationsCountElement.style.display = "none"
     }
