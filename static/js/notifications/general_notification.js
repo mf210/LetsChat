@@ -1,9 +1,11 @@
 // Vars
 const notificationContainer = document.getElementById("id_general_notifications_container");
 const generalNotificationsCountElement = document.getElementById("id_general_notifications_count");
+const chatNotificationsCountElement = document.getElementById("id_chat_notifications_count");
 const chatNotificationContainer = document.getElementById("id_chat_notifications_container");
 let canUserLoadGeneralNotifications = true;
 let unreadGeneralNotificationsCount = 0;
+let unreadChatNotificationsCount = 0;
 
 // Get Cookie by name
 function getCookie(name) {
@@ -24,7 +26,6 @@ notificationSocket.onmessage = function(e) {
     const command = data['command'];
     if (command === 'append_new_notification') {
         appendGeneralNotification(data['notification'], insertDown=false);
-        unreadGeneralNotificationsCount += 1;
     } else if (command === 'set_unread_general_notifications_count') {
         unreadGeneralNotificationsCount = data['count']
     } else if (command === 'remove_friendrequest_notification') {
@@ -33,6 +34,7 @@ notificationSocket.onmessage = function(e) {
         if (notificationCard) {
             notificationCard.remove();
         }
+        setUnreadGeneralNotificationsCount();
     } else if (command === 'append_new_chat_notification'){
         const chatNotificationID = createChatNotificationID(data['notification']['id'])
         const chatNotificationCard = document.getElementById(chatNotificationID);
@@ -41,7 +43,6 @@ notificationSocket.onmessage = function(e) {
         }
         appendChatNotification(data['notification'], insertDown=false);
     }
-    setUnreadGeneralNotificationsCount();
 };
 
 notificationSocket.onopen = function(e) {
@@ -116,6 +117,8 @@ function appendGeneralNotification(notification, insertDown=true){
     } else {
         notificationContainer.insertBefore(card, notificationContainer.firstChild);
     }
+    unreadGeneralNotificationsCount += 1;
+    setUnreadGeneralNotificationsCount();
 }
 
 /*
@@ -128,6 +131,8 @@ function appendChatNotification(notification, insertDown=true){
     } else {
         chatNotificationContainer.insertBefore(card, chatNotificationContainer.firstChild);
     }
+    unreadChatNotificationsCount += 1;
+    setUnreadChatNotificationsCount();
 }
 
 function createFriendshipElement(notification){
@@ -351,6 +356,18 @@ function setUnreadGeneralNotificationsCount(){
     else{
         generalNotificationsCountElement.style.background = "transparent"
         generalNotificationsCountElement.style.display = "none"
+    }
+}
+
+function setUnreadChatNotificationsCount(){
+    if(unreadChatNotificationsCount > 0){
+        chatNotificationsCountElement.style.background = "red"
+        chatNotificationsCountElement.style.display = "block"
+        chatNotificationsCountElement.innerHTML = unreadChatNotificationsCount
+    }
+    else{
+        chatNotificationsCountElement.style.background = "transparent"
+        chatNotificationsCountElement.style.display = "none"
     }
 }
 
