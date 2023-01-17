@@ -1,6 +1,6 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
-
+from privatechats.models import UnreadPrivateChatMessages
 
 
 
@@ -30,8 +30,14 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                     "count": await self.user.notifications.filter(is_read=False).acount(),
                 }
             )
-        if command == 'mark_notifications_read':
+        elif command == 'mark_notifications_read':
             await self.user.notifications.filter(is_read=False).aupdate(is_read=True)
+        elif command == 'mark_chat_notification_read':
+            upcm_id = content.get('id')
+            try:
+                await self.user.unread_private_messages.filter(id=upcm_id).aupdate(count=0)
+            except (UnreadPrivateChatMessages.DoesNotExist, ValueError):
+                pass
 
     # Receive message from room group
     async def general_notification(self, event):

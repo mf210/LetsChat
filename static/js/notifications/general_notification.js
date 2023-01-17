@@ -223,7 +223,7 @@ function createUnreadChatRoomMessagesCard(notification){
     card = createChatNotificationCard()
     card.id = createChatNotificationID(notification['id'])
     card.addEventListener("click", function(){
-        console.log(`chat notification clicked...`)
+        setChatNotificationsAsRead(notification['id']);
     })
 
     var div1 = document.createElement("div")
@@ -378,6 +378,17 @@ function setGeneralNotificationsAsRead(){
     }));
     unreadGeneralNotificationsCount = 0;
     setUnreadGeneralNotificationsCount();
+}
+
+// Set chat notifications as read
+function setChatNotificationsAsRead(ID) {
+    notificationSocket.send(JSON.stringify({
+        command: "mark_chat_notification_read",
+        id: ID
+    }));
+    document.getElementById(createChatNotificationID(ID)).remove();
+    unreadChatNotificationsCount -= unreadChatNotificationsCount > 0 ? 1 : 0;
+    setUnreadChatNotificationsCount();
 }
 
 // Event listeners
