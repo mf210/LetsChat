@@ -34,11 +34,12 @@ notificationSocket.onmessage = function(e) {
             notificationCard.remove();
         }
     } else if (command === 'append_new_chat_notification'){
-        const chatNotificationCard = document.getElementById(`id_chat_notification_${data['notification']['id']}`);
+        const chatNotificationID = createChatNotificationID(data['notification']['id'])
+        const chatNotificationCard = document.getElementById(chatNotificationID);
         if (chatNotificationCard) {
             chatNotificationCard.remove();
         }
-        appendUnreadPrivateChatMessagesNotification(data['notification'], insertDown=false);
+        appendChatNotification(data['notification'], insertDown=false);
     }
     setUnreadGeneralNotificationsCount();
 };
@@ -53,7 +54,7 @@ notificationSocket.onclose = function(e) {
     console.error('notification socket closed.');
 };
 
-// Fetching Data
+// Fetching Data - General Notifications
 function getGeneralNotifications(){
     const earliestNotif = notificationContainer.lastChild;
     const earliestNotifID = earliestNotif ? earliestNotif.id.slice(24) : null;
@@ -71,11 +72,12 @@ function getGeneralNotifications(){
 }
 getGeneralNotifications();
 
-function getUnreadPrivateChatMessagesNotification(){
+// Fetching Data - Chat Notifications
+function getChatNotifications(){
     fetch('/privatechats/unread_messages/')
     .then((response) => response.json())
     .then((data) => {
-        data.forEach(obj => appendUnreadPrivateChatMessagesNotification(obj));
+        data.forEach(obj => appendChatNotification(obj));
         // canUserLoadGeneralNotifications = true;
     })
     .catch((error) => {
@@ -83,7 +85,7 @@ function getUnreadPrivateChatMessagesNotification(){
         // canUserLoadGeneralNotifications = true;
     });
 }
-getUnreadPrivateChatMessagesNotification();
+getChatNotifications();
 
 /*
     The card that each notification sits in
@@ -119,7 +121,7 @@ function appendGeneralNotification(notification, insertDown=true){
 /*
     Append a unread private chat message notification
 */
-function appendUnreadPrivateChatMessagesNotification(notification, insertDown=true){
+function appendChatNotification(notification, insertDown=true){
     const card = createUnreadChatRoomMessagesCard(notification);
     if (insertDown) {
         chatNotificationContainer.appendChild(card);
@@ -137,7 +139,6 @@ function createFriendshipElement(notification){
 
     const div1 = document.createElement("div");
     div1.classList.add("d-flex", "flex-row", "align-items-start");
-    div1.id = assignGeneralDiv1Id(notification);
 
     img = createProfileImageThumbnail(notification['image_url']);
     div1.appendChild(img);
@@ -150,7 +151,6 @@ function createFriendshipElement(notification){
     else{
         span.innerHTML = notification['verb'];
     }
-    span.id = assignGeneralVerbId(notification);
     div1.appendChild(span);
     card.appendChild(div1);
     card.appendChild(createGeneralTimestampElement(notification['timestamp']));
@@ -169,7 +169,6 @@ function createFriendRequestElement(notification){
 
     div1 = document.createElement("div")
     div1.classList.add("d-flex", "flex-row", "align-items-start")
-    div1.id = assignGeneralDiv1Id(notification)
     
     img = createProfileImageThumbnail(notification['image_url']);
     div1.appendChild(img)
@@ -177,34 +176,28 @@ function createFriendRequestElement(notification){
     span = document.createElement("span")
     span.classList.add("m-auto")
     span.innerHTML = notification['verb']
-    span.id = assignGeneralVerbId(notification)
     div1.appendChild(span)
     card.appendChild(div1)
 
     div2 = document.createElement("div")
     div2.classList.add("d-flex", "flex-row", "mt-2")
-    div2.id = assignGeneralDiv2Id(notification)
 
     pos_action = document.createElement("a")
     pos_action.classList.add("btn", "btn-primary", "mr-2")
-    // pos_action.href = "#"
     pos_action.innerHTML = "Accept"
     pos_action.addEventListener("click", function(e){
         e.stopPropagation();
         handleFriendRequest(notification['content_object_id'], accept=true, card.id);
     })
-    pos_action.id = assignGeneralPosActionId(notification)
     div2.appendChild(pos_action)
 
     neg_action = document.createElement("a")
     neg_action.classList.add("btn", "btn-secondary")
-    // neg_action.href = "#"
     neg_action.innerHTML = "Decline"
     neg_action.addEventListener("click", function(e){
         e.stopPropagation();
         handleFriendRequest(notification['content_object_id'], accept=false, card.id);
     })
-    neg_action.id = assignGeneralNegActionId(notification)
     div2.appendChild(neg_action)
     card.appendChild(div2)
 
@@ -223,31 +216,26 @@ function createChatNotificationCard(){
 
 function createUnreadChatRoomMessagesCard(notification){
     card = createChatNotificationCard()
-    card.id = `id_chat_notification_${notification['id']}`
+    card.id = createChatNotificationID(notification['id'])
     card.addEventListener("click", function(){
         console.log(`chat notification clicked...`)
     })
 
     var div1 = document.createElement("div")
     div1.classList.add("d-flex", "flex-row", "align-items-start")
-    // div1.id = assignChatDiv1Id(notification)
 
     img = createProfileImageThumbnail(notification['sender_profile_image'])
-    // img.id = assignChatImgId(notification)
     div1.appendChild(img)
 
     var div2 = document.createElement("div")
     div2.classList.add("d-flex", "flex-column")
-    // div2.id = assignChatDiv2Id(notification)
     
     var title = document.createElement("span")
     title.classList.add("align-items-start")
     title.innerHTML = notification['sender_username']
-    // title.id = assignChatTitleId(notification)
     div2.appendChild(title)
 
     var chatRoomMessage = document.createElement("span")
-    // chatRoomMessage.id = assignChatroomMessageId(notification)
     chatRoomMessage.classList.add("align-items-start", "pt-1", "small", "notification-chatroom-msg")
     if(notification['most_recent_message'].length > 50){
         chatRoomMessage.innerHTML = notification['most_recent_message'].slice(0, 50) + "..."
@@ -290,7 +278,6 @@ function createProfileImageThumbnail(imageURL){
     const img = document.createElement("img");
     img.classList.add("notification-thumbnail-image", "img-fluid", "rounded-circle", "mr-2");
     img.src = imageURL;
-    // img.id = assignGeneralImgId(notification);
     return img;
 }
 
@@ -302,7 +289,6 @@ function createGeneralTimestampElement(notificationTimestamp){
     timestamp.classList.add("small", "pt-2", "timestamp-text");
     timestamp.setAttribute('isotime', notificationTimestamp);
     timestamp.innerHTML = dateTimeToYMWDHMS(notificationTimestamp);
-    // timestamp.id = assignGeneralTimestampId(notification);
     return timestamp;
 }
 /*
@@ -385,35 +371,11 @@ document.getElementById('id_notification_dropdown_toggle').addEventListener('cli
 })
 
 //  Helpers for generating IDs 
-function assignGeneralDiv1Id(notification){
-    return "id_general_div1_" + notification['notification_id']
-}
-
-function assignGeneralImgId(notification){
-    return "id_general_img_" + notification['notification_id']
-}
-
-function assignGeneralVerbId(notification){
-    return "id_general_verb_" + notification['notification_id']
-}
-
-function assignGeneralDiv2Id(notification){
-    return "id_general_div2_" + notification['notification_id']
-}
-
-function assignGeneralPosActionId(notification){
-    return "id_general_pos_action_" + notification['notification_id']
-}
-
-function assignGeneralNegActionId(notification){
-    return "id_general_neg_action_" + notification['notification_id']
-}
-
-function assignGeneralTimestampId(notification){
-    return "id_timestamp_" + notification['notification_id']
-}
-
 function assignGeneralCardId(notification){
     return "id_general_notification_" + notification['notification_id']
+}
+
+function createChatNotificationID(ID) {
+    return `id_chat_notification_${ID}`
 }
 
