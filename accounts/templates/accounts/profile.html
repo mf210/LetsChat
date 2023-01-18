@@ -14,29 +14,16 @@
 				<div class="d-flex flex-column justify-content-center p-4">
 					<img class="d-block border border-dark rounded-circle" alt="profile image" src="{{ user_object.profile_image.url }}" width="300" height="300">
 					<p class="mt-4 mb-1 field-heading">Email</p>
-					{%  if user == user_object %}
-						<h5>{{ user.email }}</h5>
+					{% if user_object.hide_email %}
+						<h5>**********</h5>
 					{% else %}
-						{% if user_object.hide_email %}
-							<h5>**********</h5>
-						{% else %}
-							<h5>{{ user_object.email }}</h5>
-						{% endif %}
+						<h5>{{ user_object.email }}</h5>
 					{% endif %}
 					<p class="mt-4 mb-1 field-heading">Username</p>
 					<h5>{{ user_object.username }}</h5>
-
-					<!-- If Auth user is viewing their own profile -->
-					{% if user.username == user_object.username %}
-					<a  class="mt-4 btn btn-primary" href="{% url 'accounts:edit_profile' %}">Update</a>
-					<div class="d-flex flex-column mt-4">
-						<a class="m-auto" href="{% url 'account_change_password' %}">Change password</a>
-					</div>
-					{% endif %}
 				</div>
 			</div>
 			</div>
-
 
 			<div class="d-flex flex-column mb-4">
 				<!-- THEM to YOU -->
@@ -52,7 +39,16 @@
 
 				<div class="card m-2 px-4 pb-4">
 					<!-- Cancel Friend Request / Send Friend Request / Remove Friend -->
-					{% if not is_friend and user != user_object %}
+					{% if is_friend %}
+						<div class="dropdown pt-4 m-auto">
+							<button class="btn btn-secondary dropdown-toggle friends-btn" type="button" id="id_friends_toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Friends
+							</button>
+							<div class="dropdown-menu" aria-labelledby="id_friends_toggle">
+								<a class="dropdown-item" onclick="unfriend(`{% url 'friendships:unfriend' %}`, `{{ user_object.pk }}`)">Unfriend</a>
+							</div>
+						</div>
+					{% else %}
 						<!-- You sent them a request -->
 						{% if sent_friend_req %}
 							<div class="d-flex flex-column align-items-center pt-4">
@@ -67,17 +63,6 @@
 								</button>
 							</div>
 						{% endif %}
-					{% endif %}
-
-					{% if is_friend %}
-						<div class="dropdown pt-4 m-auto">
-							<button class="btn btn-secondary dropdown-toggle friends-btn" type="button" id="id_friends_toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							Friends
-							</button>
-							<div class="dropdown-menu" aria-labelledby="id_friends_toggle">
-								<a class="dropdown-item" onclick="unfriend(`{% url 'friendships:unfriend' %}`, `{{ user_object.pk }}`)">Unfriend</a>
-							</div>
-						</div>
                 	{% endif %}
 					<!-- Friend list link -->
 					<div class="d-flex flex-column pt-4">
