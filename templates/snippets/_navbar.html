@@ -23,10 +23,6 @@
 									<span id="id_chat_notifications_count" class="notify-badge"></span>
 									<span class="d-flex material-icons notifications-material-icon m-auto align-items-center">chat</span>
 									<div class="dropdown-menu scrollable-menu" aria-labelledby="id_chat_notification_dropdown_toggle" id="id_chat_notifications_container"></div>
-										<!-- <div class="chat-dropdown-header d-flex flex-row justify-content-center m-auto align-items-end" onclick="chatRedirect(`{% url 'privatechats:chat-room' %}`)">
-											<span class="material-icons mr-2">open_with</span>
-											<span class="mr-2">Go to chat</span>
-										</div> -->
 								</div>
 							</div>
 
@@ -41,7 +37,7 @@
 							<div class="btn-group dropleft">
 								<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ user.profile_image.url }}" alt="codingwithmitch logo" width="40" height="40">
 								<div class="dropdown-menu" aria-labelledby="id_profile_links">
-									<a class="dropdown-item" href="{% url 'accounts:profile' username=request.user.username %}">Profile</a>
+									<a class="dropdown-item" href="{% url 'home:dashboard' %}">Dashboard</a>
 									<a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a>
 								</div>
 							</div>
