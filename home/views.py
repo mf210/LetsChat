@@ -5,8 +5,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 
-def index(request):
-    return render(request, 'home/index.html')
+class IndexView(View):
+    """Index View"""
+    def get(self, request, *args, **kwargs):
+        return render(request, 'home/index.html')
 
 
 class DashboardView(LoginRequiredMixin, View):
