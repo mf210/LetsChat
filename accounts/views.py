@@ -14,7 +14,10 @@ User = get_user_model()
 class ProfileView(LoginRequiredMixin, View):
     """Details of each accounts"""
     def get(self, request, *args, **kwargs):
-        user = get_object_or_404(User, username=kwargs.get('username'))
+        user = get_object_or_404(
+            User.objects.exclude(pk=request.user.pk), 
+            username=kwargs.get('username')
+        )
         try:
             received_friend_req = FriendRequest.objects.get(sender=user, receiver=request.user)
         except FriendRequest.DoesNotExist:

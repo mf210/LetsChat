@@ -13,12 +13,11 @@ def test_profile_view_status_code_notloggedin_user(client: Client):
     assert response.status_code == HTTPStatus.FOUND
 
 
-def test_profile_view_status_code_loggedin_user(client: Client, django_user_model):
+def test_profile_view_status_code_loggedin_user(admin_client, django_user_model):
     """Check the status code of response with logged in user"""
     user = django_user_model.objects.create_user(username='test-user', email='testuser@gmail.com', password='password')
-    client.force_login(user)
     url = reverse('accounts:profile', kwargs={'username': user.username})
-    response = client.get(url)
+    response = admin_client.get(url)
     assert response.status_code == HTTPStatus.OK
 
 
