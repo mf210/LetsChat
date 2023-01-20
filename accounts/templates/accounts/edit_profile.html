@@ -17,10 +17,9 @@
                         {% csrf_token %}
                         <input type="file" accept="image/*" name="{{ form.profile_image.name }}" id="profile_image_input">
                         <h6 class="mt-4 field-heading">Email</h6>
-                        <input type="email" name="email" id="id_input_email" class="form-control" placeholder="Email address" disabled value={{ user.email }} >
+                        <input type="email" name="email" id="id_input_email" class="form-control" placeholder="Email address" value="{{ user.email }}" disabled>
                         <h6 class="mt-4 field-heading">Username</h6>
-                        <input type="text" name="username" id="id_input_username" class="form-control" placeholder="Username" autofocus required
-                        value="{{form.initial.username}}">
+                        <input type="text" name="username" id="id_input_username" class="form-control" value="{{ user.username }}" disabled>
                         <div class="mt-4 checkbox">
                             <label>
                                 <input type="checkbox" name="hide_email" id="id_input_hide_email" {% if form.initial.hide_email %}checked{%endif%}>

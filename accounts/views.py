@@ -55,7 +55,7 @@ class SearchAccountView(LoginRequiredMixin, View):
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     """Update user's profile"""
-    fields = ['username', 'profile_image', 'hide_email']
+    fields = ['profile_image', 'hide_email']
     template_name = 'accounts/edit_profile.html'
     success_url = reverse_lazy('home:dashboard')
 
