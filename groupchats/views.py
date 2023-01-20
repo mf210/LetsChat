@@ -32,9 +32,10 @@ class GroupChatRoomMessageView(LoginRequiredMixin, View):
         earliest_msg_id = request.GET.get('earliest_msg_id')
         try:
             earliest_msg = chat_room_obj.messages.get(id=earliest_msg_id)
-            msg_list = chat_room_obj.messages.filter(timestamp__lt=earliest_msg.timestamp)
+            msg_list = chat_room_obj.messages.select_related('user').\
+                filter(timestamp__lt=earliest_msg.timestamp)
         except (GroupChatRoomMessage.DoesNotExist, ValueError):
-            msg_list = chat_room_obj.messages.all()
+            msg_list = chat_room_obj.messages.select_related('user').all()
         # prepare data for sending
         data = []
         for msg_obj in msg_list[:25]:
