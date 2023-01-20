@@ -40,24 +40,24 @@ class HandleFriendRequestView(LoginRequiredMixin, View):
 class SendFriendRequestView(LoginRequiredMixin, View):
     """Send friend request"""
     def post(self, request, *args, **kwargs):
+        sender = request.user
         receiver_id = request.POST.get('receiver_id')
         receiver = get_object_or_404(
-            User.objects.exclude(pk=request.user.pk),
+            User.objects.exclude(pk=sender.pk),
             id=receiver_id
         )
-        if FriendRequest.objects.filter(sender=request.user, receiver=receiver).exists():
+        if FriendRequest.objects.filter(sender=sender, receiver=receiver).exists():
             status = HTTPStatus.CONFLICT
             message = f'Come on! you have sent a request to {receiver.username} before'
         else:
-            friend_req_obj = FriendRequest.objects.create(sender=request.user, receiver=receiver)
+            friend_req_obj = FriendRequest.objects.create(sender=sender, receiver=receiver)
             notification = friend_req_obj.notifications.create(
                 user=receiver,
-                verb=f"{request.user} sent you a friend request, do you wanna accept?"
+                verb=f"{sender} sent you a friend request, do you wanna accept?"
             )
-            send_notification_via_websocket(notification, request.user)
+            send_notification_via_websocket(notification, sender)
             status = HTTPStatus.OK
             message = 'Request sent successfully!'
-
         return HttpResponse(message, status=status)
 
 
