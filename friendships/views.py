@@ -19,7 +19,10 @@ class HandleFriendRequestView(LoginRequiredMixin, View):
     """Accept, Decline or cancel friend request"""
     def post(self, request, *args, **kwargs):
         user = request.user
-        friend_req_obj = get_object_or_404(FriendRequest, id=kwargs.get('pk'), receiver=user)
+        friend_req_obj = get_object_or_404(
+            FriendRequest.objects.select_related('sender'),
+            id=kwargs.get('pk'), receiver=user
+        )
         accept = True if request.POST.get('accept') == 'true' else False
         sender = friend_req_obj.sender
         if accept:
@@ -31,7 +34,7 @@ class HandleFriendRequestView(LoginRequiredMixin, View):
             sender_msg = f"{user} didn't accept your friend request!"
             message = 'Friend request declined!'
         notification = user.friendship.notifications.create(user=sender, verb=sender_msg)
-        send_notification_via_websocket(notification)
+        send_notification_via_websocket(notification, user)
         return HttpResponse(message)
 
 class SendFriendRequestView(LoginRequiredMixin, View):
@@ -51,7 +54,7 @@ class SendFriendRequestView(LoginRequiredMixin, View):
                 user=receiver,
                 verb=f"{request.user} sent you a friend request, do you wanna accept?"
             )
-            send_notification_via_websocket(notification)
+            send_notification_via_websocket(notification, request.user)
             status = HTTPStatus.OK
             message = 'Request sent successfully!'
 
@@ -90,7 +93,7 @@ class UnfriendView(LoginRequiredMixin, View):
             user=user,
             verb=f"{request.user} unfriended you!"
         )
-        send_notification_via_websocket(notification)
+        send_notification_via_websocket(notification, request.user)
         return HttpResponse(f'{user} removed from your friends list')
 
 
@@ -110,19 +113,14 @@ class FriendListView(LoginRequiredMixin, View):
         return render(request, 'friendships/friend_list.html', context)
 
 
-def send_notification_via_websocket(notification):
-    content_type = notification.content_type.app_labeled_name
-    if content_type == 'friendships | friendship':
-        sender = notification.content_object.user
-    elif content_type == 'friendships | friend request':
-        sender = notification.content_object.sender
+def send_notification_via_websocket(notification, sender):
     data = {
         'verb': notification.verb,
         'timestamp': notification.timestamp.isoformat(),
         'is_read': notification.is_read,
         'profile_url': sender.get_absolute_url(),
         'image_url': sender.profile_image.url,
-        'content_type': content_type,
+        'content_type': notification.content_type.app_labeled_name,
         'content_object_id': notification.content_object.id,
         'notification_id': notification.id,
     }
