@@ -19,14 +19,14 @@
 					<img class="rounded-circle profile-image" width="80" height="80" src="{{ account.profile_image.url }}" alt="">
 				</div>
 			</a>
-			<a class="profile-link" href="{% url 'accounts:profile' username=account.username %}">
-				<div class="card-center px-2">
-					<h4 class="card-title">{{ account.username }}</h4>
-					<p class="card-text"><a href="#">Send a Message</a></p>
-				</div>
-			</a>
-			<div class="d-flex flex-row card-right flex-grow-1 justify-content-end mx-2">
-				{% if user|is_friend_with:account %}
+			{% if user|is_friend_with:account %}
+				<a class="profile-link" href="{% url 'accounts:profile' username=account.username %}">
+					<div class="card-center px-2">
+						<h4 class="card-title">{{ account.username }}</h4>
+						<p class="card-text"><a href="#">Send a Message</a></p>
+					</div>
+				</a>
+				<div class="d-flex flex-row card-right flex-grow-1 justify-content-end mx-2">
 					<div class="d-flex flex-row friends-text-container p-3">
 						<p class="friends-text m-auto">
 							Friends 
@@ -35,15 +35,20 @@
 						check_circle_outline
 						</span>
 					</div>
-				{% else %}
-                    <div class="d-flex flex-row friends-text-container p-3">
-                        <p class="friends-text m-auto">
-                            Not Friends 
-                        </p>
-                        <span class="material-icons cancel-icon m-auto pl-2">cancel</span>
-                    </div>
-				{% endif %}
-			</div>
+				</div>
+			{% else %}
+				<a class="profile-link" href="{% url 'accounts:profile' username=account.username %}">
+					<div class="card-center px-2">
+						<h4 class="card-title">{{ account.username }}</h4>
+					</div>
+				</a>
+				<div class="d-flex flex-row friends-text-container p-3">
+					<p class="friends-text m-auto">
+						Not Friends 
+					</p>
+					<span class="material-icons cancel-icon m-auto pl-2">cancel</span>
+				</div>
+			{% endif %}
 		</div>
 		
 		{% endfor %}
