@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.views.generic import View, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+from django.urls import reverse_lazy
 
 from friendships.models import FriendRequest
 
@@ -56,6 +57,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     """Update user's profile"""
     fields = ['username', 'profile_image', 'hide_email']
     template_name = 'accounts/edit_profile.html'
+    success_url = reverse_lazy('home:dashboard')
 
     def get_object(self, queryset=None):
         return self.request.user
