@@ -96,9 +96,10 @@ class UnfriendView(LoginRequiredMixin, View):
         request.user.friendship.unfriend(user)
         notification = request.user.friendship.notifications.create(
             user=user,
+            sender=request.user,
             verb=f"{request.user} unfriended you!"
         )
-        send_notification_via_websocket(notification, request.user)
+        send_notification_via_websocket(notification)
         return HttpResponse(f'{user} removed from your friends list')
 
 
