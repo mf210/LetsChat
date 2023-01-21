@@ -33,8 +33,12 @@ class HandleFriendRequestView(LoginRequiredMixin, View):
             friend_req_obj.delete()
             sender_msg = f"{user} didn't accept your friend request!"
             message = 'Friend request declined!'
-        notification = user.friendship.notifications.create(user=sender, verb=sender_msg)
-        send_notification_via_websocket(notification, user)
+        notification = user.friendship.notifications.create(
+            user=sender,
+            sender=user,
+            verb=sender_msg
+        )
+        send_notification_via_websocket(notification)
         return HttpResponse(message)
 
 class SendFriendRequestView(LoginRequiredMixin, View):
