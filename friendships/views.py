@@ -53,9 +53,10 @@ class SendFriendRequestView(LoginRequiredMixin, View):
             friend_req_obj = FriendRequest.objects.create(sender=sender, receiver=receiver)
             notification = friend_req_obj.notifications.create(
                 user=receiver,
+                sender=sender,
                 verb=f"{sender} sent you a friend request, do you wanna accept?"
             )
-            send_notification_via_websocket(notification, sender)
+            send_notification_via_websocket(notification)
             status = HTTPStatus.OK
             message = 'Request sent successfully!'
         return HttpResponse(message, status=status)
@@ -113,13 +114,13 @@ class FriendListView(LoginRequiredMixin, View):
         return render(request, 'friendships/friend_list.html', context)
 
 
-def send_notification_via_websocket(notification, sender):
+def send_notification_via_websocket(notification):
     data = {
         'verb': notification.verb,
         'timestamp': notification.timestamp.isoformat(),
         'is_read': notification.is_read,
-        'profile_url': sender.get_absolute_url(),
-        'image_url': sender.profile_image.url,
+        'profile_url': notification.sender.get_absolute_url(),
+        'image_url': notification.sender.profile_image.url,
         'content_type': notification.content_type.app_labeled_name,
         'content_object_id': notification.content_object.id,
         'notification_id': notification.id,
