@@ -16,3 +16,8 @@ class DashboardView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         return render(request, 'home/dashboard.html')
 
+
+class ChatsView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'home/chats.html')
+
