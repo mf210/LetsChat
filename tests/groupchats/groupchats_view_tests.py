@@ -26,7 +26,7 @@ def test_joined_users_to_group_chat_room_gets_ok_status_code(client, django_user
         email='userone@gmail.com',
         password='password'
     )
-    gcr_obj = GroupChatRoom.objects.create(name='test_room')
+    gcr_obj = GroupChatRoom.objects.create(name='test_room', owner=user1)
     gcr_obj.users.add(user1)
     client.force_login(user1)
     url = reverse('groupchats:chat-room', kwargs={'room_name': 'test_room'})
@@ -40,7 +40,11 @@ def test_not_joined_user_to_group_chat_room_gets_forbidden_status_code(
     Get 403 (Forbidden) status code
     for users who are not in the group_chat_room users list
     """
-    GroupChatRoom.objects.create(name='test_room')
+    test_user = django_user_model.objects.create_user(
+        username='test-user',
+        password='password'
+    )
+    GroupChatRoom.objects.create(name='test_room', owner=test_user)
     url = reverse('groupchats:chat-room', kwargs={'room_name': 'test_room'})
     response = admin_client.get(url)
     assert response.status_code == HTTPStatus.FORBIDDEN
@@ -52,7 +56,7 @@ def create_group_chat_room_messages(django_user_model):
         email='userone@gmail.com',
         password='password'
     )
-    gcr_obj = GroupChatRoom.objects.create(name='test_room')
+    gcr_obj = GroupChatRoom.objects.create(name='test_room', owner=user1)
     gcr_obj.users.add(user1)
     gcrm_1 = GroupChatRoomMessage.objects.create(
         user=user1,
@@ -127,7 +131,11 @@ def test_not_joined_users_to_group_chat_room_cannot_get_chat_messages(
     """
     Return 403 status code for users who are not joined
     """
-    GroupChatRoom.objects.create(name='test_room')
+    test_user = django_user_model.objects.create_user(
+        username='test-user',
+        password='password'
+    )
+    GroupChatRoom.objects.create(name='test_room', owner=test_user)
     url = reverse('groupchats:chat-room-messages', kwargs={'room_name': 'test_room'})
     response = admin_client.get(url)
     assert response.status_code == HTTPStatus.FORBIDDEN

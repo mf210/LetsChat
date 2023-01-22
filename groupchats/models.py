@@ -6,12 +6,24 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+def group_directory_path(instance, filename):
+    return f'group_{instance.id}/image.png'
+
+def get_default_image_path():
+    return "default_images/group_image.png"
 
 
 class GroupChatRoom(models.Model):
     """Group Chat Room Model"""
     name = models.CharField(max_length=255, unique=True)
-    # users who are connected to chat room
+    image = models.ImageField(
+        max_length=255,
+        null=True,
+        blank=False,
+        upload_to=group_directory_path,
+        default=get_default_image_path
+    )
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_groups')
     users = models.ManyToManyField(User, blank=True)
 
     def __str__(self):
@@ -24,6 +36,14 @@ class GroupChatRoom(models.Model):
         messages as they are generated.
         """
         return f'GroupChatRoom-{self.id}'
+
+    def save(self, *args, **kwargs) -> None:
+        if self.pk:
+            # Delete old group image before save the new one
+            image = GroupChatRoom.objects.get(pk=self.pk).image
+            if self.image.name != image.name != get_default_image_path():
+                image.delete(save=False)
+        return super().save(*args, **kwargs)
 
 
 class GroupChatRoomMessage(models.Model):
