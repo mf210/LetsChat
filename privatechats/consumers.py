@@ -42,7 +42,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 room=self.pcr_obj,
                 content=message
             )
-            await self.keep_track_unread_messages(pcrm_obj)
+            await self.keep_track_unread_messages(pcrm_obj.content[:60])
             # Send message to room group
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -76,7 +76,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             pass
         return False
     
-    async def keep_track_unread_messages(self, pcrm_obj):
+    async def keep_track_unread_messages(self, msg):
         """
         Increment the number of roommate unread messages if he/she is not in this chat-room
         """
@@ -85,11 +85,11 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             upcm_obj, created = await UnreadPrivateChatMessages.objects.aget_or_create(
                 user=self.roommate,
                 room=self.pcr_obj,
-                defaults={'most_recent_message': pcrm_obj}
+                defaults={'sender': self.user, 'most_recent_message': msg}
             )
             if not created:
                 upcm_obj.count += 1
-                upcm_obj.most_recent_message = pcrm_obj
+                upcm_obj.most_recent_message = msg
                 await database_sync_to_async(upcm_obj.save)(
                     update_fields=['count', 'most_recent_message', 'timestamp']
                 )
@@ -101,7 +101,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                     'notification': {
                         'id': upcm_obj.id,
                         'count': upcm_obj.count,
-                        'most_recent_message': pcrm_obj.content,
+                        'most_recent_message': msg,
                         'most_recent_message_timestamp': upcm_obj.timestamp.isoformat(),
                         'sender_username': self.user.username,
                         'sender_profile_image': self.user.profile_image.url,
