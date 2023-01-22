@@ -119,7 +119,7 @@ def test_only_sender_can_cancel_friend_request(client: Client, django_user_model
     user1_friend_request = FriendRequest.objects.create(sender=user1, receiver=user2)
     user2_friend_request = FriendRequest.objects.create(sender=user2, receiver=user1)
     # create notification for receiver of user1 friend request
-    user1_friend_request.notifications.create(user=user2, verb='notification')
+    user1_friend_request.notifications.create(user=user2, sender=user1, verb='notification')
     client.force_login(user1)
     url = reverse('friendships:cancel-friend-request')
     response_1 = client.post(url, data={'pk': user1_friend_request.pk})
