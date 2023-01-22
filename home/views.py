@@ -19,5 +19,9 @@ class DashboardView(LoginRequiredMixin, View):
 
 class ChatsView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'home/chats.html')
+        friends = request.user.friendship.friends.all()
+        context = {
+            'friends': friends,
+        }
+        return render(request, 'home/chats.html', context)
 
