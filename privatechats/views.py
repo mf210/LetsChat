@@ -35,13 +35,14 @@ class PrivateChatRoomMessageView(LoginRequiredMixin, View):
         except User.DoesNotExist:
             return HttpResponse(status=HTTPStatus.NOT_FOUND)
 
+        chat_room_messages = chat_room_obj.messages.select_related('user')
         # get earliest chat messages based on earliest_msg_id
         earliest_msg_id = request.GET.get('earliest_msg_id')
         try:
-            earliest_msg = chat_room_obj.messages.get(id=earliest_msg_id)
-            msg_list = chat_room_obj.messages.filter(timestamp__lt=earliest_msg.timestamp)
+            earliest_msg = chat_room_messages.get(id=earliest_msg_id)
+            msg_list = chat_room_messages.filter(timestamp__lt=earliest_msg.timestamp)
         except (PrivateChatRoomMessage.DoesNotExist, ValueError):
-            msg_list = chat_room_obj.messages.all()
+            msg_list = chat_room_messages
         # prepare data for sending
         data = []
         for msg_obj in msg_list[:25]:
