@@ -1,6 +1,6 @@
 import json
 
-from django.shortcuts import HttpResponse, render
+from django.shortcuts import HttpResponse, render, redirect
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -10,8 +10,9 @@ from groupchats.models import GroupChatRoom, GroupChatRoomMessage
 
 
 class IndexView(View):
-    """Index View"""
     def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('groupchats:chat-room', room_name='public')
         return render(request, 'home/index.html')
 
 
