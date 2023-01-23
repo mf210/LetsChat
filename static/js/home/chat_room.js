@@ -126,7 +126,7 @@ function getChatMessages(){
     displayChatRoomLoadingSpinner(true);
     const earliestMsg = document.getElementById("id-chat-log").lastChild;
     const earliestMsgID = earliestMsg ? earliestMsg.getAttribute('msg-id') : null;
-    const url = `${window.location.href}/messages/?earliest_msg_id=${earliestMsgID}`;
+    const url = `/public_messages/?earliest_msg_id=${earliestMsgID}`;
     fetch(url)
     .then((response) => response.json())
     .then((data) => {
