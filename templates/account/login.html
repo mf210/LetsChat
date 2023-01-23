@@ -53,10 +53,12 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
         <br>
         <!-- submit button -->
         <div class="d-grid gap-2">
-          <button class="btn btn-success" type="submit">{% trans "Sign In" %}</button>
+          <button class="btn btn-success btn-block" type="submit">{% trans "Sign In" %}</button>
         </div>
         <br>
       </form>
+      <p style="text-align: center;">Register without third party accounts</p>
+      <a class="btn btn-primary btn-block" href="{{ signup_url }}">Register</a>
     </div>
 
     <div class="col">
