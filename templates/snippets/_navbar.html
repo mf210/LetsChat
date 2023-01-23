@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="d-flex flex-column flex-lg-row p-3 px-md-4 mb-3 border-bottom shadow-sm" style="background-color: #0e82d4;">
+<div class="d-flex flex-column flex-lg-row p-3 px-md-4 mb-3 border-bottom shadow-sm" style="background-color: #e3f2fd;">
 
 	<!-- MEDIUM+ SCREENS -->
 	<div class="d-none d-md-flex flex-row my-auto flex-grow-1 align-items-center">
@@ -8,8 +8,12 @@
             <img src="{% static 'images/letschat.svg' %}" width="40" height="40" alt="home" loading="lazy">
         </a>
 
-		<form class="search-bar justify-content-start" action="{% url 'accounts:search' %}">
+		<a class="btn btn-outline-primary mr-2 ml-2" href="{% url 'groupchats:chat-room' room_name='public' %}" type="button">Public Chat Room</a>
+		<a class="btn btn-outline-primary mr-5" href="{% url 'privatechats:chat-room' %}" type="button">Private Chats</a>
+
+		<form class="search-bar justify-content-start form-inline" action="{% url 'accounts:search' %}">
 			<input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search...">
+			<button class="btn btn-info ml-1" type="submit">Search</button>
 		</form>
 
 		<div class="d-flex flex-row-reverse flex-grow-1">
@@ -45,7 +49,7 @@
 						
 					</div>
 				{% else %}
-					<a class="btn btn-outline-light" href="{% url 'account_login' %}">Login | Register</a>
+					<a class="btn btn-outline-success" href="{% url 'account_login' %}">Login | Register</a>
 					<!-- <a class="btn btn-outline-light" href="{% url 'account_signup' %}">Register</a> -->
 				{% endif %}	
 			</nav>
@@ -75,8 +79,8 @@
 					</div>
 				</div>
 				{% else %}
-					<a class="btn btn-success m-2" href="{% url 'account_login' %}">Login</a>
-					<a class="btn btn-success m-2" href="{% url 'account_signup' %}">Register</a>
+					<a class="btn btn-outline-success m-2" href="{% url 'account_login' %}">Login | Register</a>
+					<!-- <a class="btn btn-success m-2" href="{% url 'account_signup' %}">Register</a> -->
 				{% endif %}	
 			</nav>
 	  	</div>
