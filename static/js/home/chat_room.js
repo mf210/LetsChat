@@ -14,7 +14,7 @@ document.getElementById('id-chat-message-input').onkeyup = function(e) {
 };
 
 document.querySelector('#id-chat-message-submit').onclick = function(e) {
-    showClientErrorModal('Please login and then send youre message.');
+    showClientErrorModal('Please login and then send your message.');
 }
 
 
