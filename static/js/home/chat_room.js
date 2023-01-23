@@ -5,35 +5,6 @@ const spinner = document.getElementById("id-chatroom-loading-spinner");
 let canUserLoadChatMessages = true;
 const md = window.markdownit();
 
-const chatSocket = new WebSocket(
-    'ws://'
-    + window.location.host
-    + '/ws/groupchat/'
-    + roomName
-    + '/'
-);
-
-chatSocket.onmessage = function(e) {
-    const data = JSON.parse(e.data);
-    const msgType = data['type'];
-    if (msgType === 'chat_message'){
-        appendChatMessage(data);
-    } else if (msgType === 'room_online_users_count') {
-        setRoomOnlineUsersCount(data);
-    }
-};
-
-chatSocket.onopen = function(e) {
-    getChatMessages();
-};
-
-chatSocket.onclose = function(e) {
-    console.error('ChatSocket closed.');
-};
-
-chatSocket.onerror = function(e){
-    console.log('ChatSocket error', e);
-};
 
 // document.getElementById('id-chat-message-input').focus();
 document.getElementById('id-chat-message-input').onkeyup = function(e) {
@@ -43,21 +14,11 @@ document.getElementById('id-chat-message-input').onkeyup = function(e) {
 };
 
 document.querySelector('#id-chat-message-submit').onclick = function(e) {
-    const messageInputDom = document.querySelector('#id-chat-message-input');
-    const message = messageInputDom.value.trim();
-    if (message) {
-        chatSocket.send(JSON.stringify({
-            command: 'send',
-            message: message
-        }));
-    } else {
-        showClientErrorModal("You can't send an empty message!");
-    }
-    messageInputDom.value = '';
-};
+    showClientErrorModal('Please login and then send youre message.');
+}
+
 
 function appendChatMessage(data, insertDown=true){
-
     const msg = data['message'] + '\n';
     const msgID = data['msg_id'];
     const username = data['username'] + ": ";
@@ -140,6 +101,7 @@ function getChatMessages(){
         displayChatRoomLoadingSpinner(false);
     });
 }
+getChatMessages();
 
 // Get the next page of chat messages when scrolls to bottom
 chatLog.addEventListener("scroll", function(e){
