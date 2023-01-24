@@ -29,7 +29,7 @@
     margin-right: 5px;
 }
 .friend-message-span{
-    font-weight: 380;
+    font-weight: 700;
     margin-top: 0px;
     margin-bottom: auto;
     margin-left: 5px;
@@ -94,4 +94,12 @@
 .friends-list-container{
     max-height: 500px;
     overflow-y: scroll;
+}
+
+.offline{
+    color: red;
+    
+}
+.online{
+    color: green;
 }
