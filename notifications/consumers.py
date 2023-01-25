@@ -5,7 +5,8 @@ from privatechats.models import UnreadPrivateChatMessages
 
 
 
-online_users = defaultdict(lambda: 0)
+MAX_CONN_FOR_USER = 3
+online_users = defaultdict(list)
 
 
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
@@ -14,15 +15,18 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         self.user = self.scope['user']
         self.room_group_name = f"notification_{self.user.username}"
         if self.user.is_authenticated:
-            # Join room group
+            # Join room group and keep track of online users
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
-            online_users[self.user.username] += 1
+            online_users[self.user.username].append(self)
+            # close oldest websocket connections
+            if len(online_users[self.user.username]) > MAX_CONN_FOR_USER:
+                await online_users[self.user.username][0].close()
 
     async def disconnect(self, close_code):
         # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        online_users[self.user.username] -= 1
+        online_users[self.user.username].remove(self)
 
     # Receive message from WebSocket
     async def receive_json(self, content, **kwargs):
