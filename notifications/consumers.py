@@ -21,15 +21,14 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             # Join room group and keep track of online users
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
-            online_users[self.user.username].append(self)
-            if len(online_users[self.user.username]) == 1:
+            user_connections = online_users[self.user.username]
+            user_connections.append(self)
+            if len(user_connections) == 1:
                 # Send to the user's friends that this user is online
-                async for friend in self.friends:
-                    for conn in online_users[friend.username]:
-                        await conn.send_friends_status()
-            # close this user's oldest websocket connection
-            if len(online_users[self.user.username]) > MAX_CONN_FOR_USER:
-                await online_users[self.user.username][0].close()
+                await self.send_your_status_to_friends()
+            # close the user's oldest websocket connection
+            if len(user_connections) > MAX_CONN_FOR_USER:
+                await user_connections[0].close()
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -37,9 +36,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         online_users[self.user.username].remove(self)
         if len(online_users[self.user.username]) == 0:
             # Send to the user's friends that this user is offline
-            async for friend in self.friends:
-                    for conn in online_users[friend.username]:
-                        await conn.send_friends_status()
+            await self.send_your_status_to_friends()
 
 
     # Receive message from WebSocket
@@ -75,6 +72,11 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                 }
             }
         )
+
+    async def send_your_status_to_friends(self):
+        async for friend in self.friends:
+            for conn in online_users[friend.username]:
+                await conn.send_friends_status()
 
     # Receive message from room group
     async def general_notification(self, event):
