@@ -25,7 +25,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             user_connections.append(self)
             if len(user_connections) == 1:
                 # Send to the user's friends that this user is online
-                await self.send_your_status_to_friends()
+                await self.send_your_status_to_friends('online')
             # close the user's oldest websocket connection
             if len(user_connections) > MAX_CONN_FOR_USER:
                 await user_connections[0].close()
@@ -36,7 +36,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         online_users[self.user.username].remove(self)
         if len(online_users[self.user.username]) == 0:
             # Send to the user's friends that this user is offline
-            await self.send_your_status_to_friends()
+            await self.send_your_status_to_friends('offline')
 
 
     # Receive message from WebSocket
@@ -65,7 +65,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'general_notification',
-                'command': 'update_friends_status',
+                'command': 'friends_status',
                 'friends_status': { 
                     friend.username: 'online' if len(online_users[friend.username]) >= 1 else 'offline'
                     async for friend in self.friends
@@ -73,11 +73,21 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             }
         )
 
-    async def send_your_status_to_friends(self):
+    async def send_your_status_to_friends(self, status):
         async for friend in self.friends:
             for conn in online_users[friend.username]:
-                await conn.send_friends_status()
+                await conn.send_friend_status(self.user, status)
 
+    async def send_friend_status(self, friend, status):
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'general_notification',
+                'command': 'update_friend_status',
+                'friend': friend.username,
+                'status': status,
+            }
+        )
     # Receive message from room group
     async def general_notification(self, event):
         # Send message to WebSocket
