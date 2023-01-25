@@ -75,8 +75,9 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_your_status_to_friends(self, status):
         async for friend in self.friends:
-            for conn in online_users[friend.username]:
-                await conn.send_friend_status(self.user, status)
+            friend_connections = online_users[friend.username]
+            if len(friend_connections) >= 1:
+                await friend_connections[0].send_friend_status(self.user, status)
 
     async def send_friend_status(self, friend, status):
         await self.channel_layer.group_send(
