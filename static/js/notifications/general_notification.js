@@ -44,6 +44,8 @@ notificationSocket.onmessage = function(e) {
             chatNotificationCard.remove();
         }
         appendChatNotification(data['notification'], insertDown=false);
+    } else if (command === 'update_friends_status'){
+        console.log(data);
     }
 };
 
