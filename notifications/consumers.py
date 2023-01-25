@@ -1,7 +1,11 @@
+from collections import defaultdict
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
 from privatechats.models import UnreadPrivateChatMessages
 
+
+
+online_users = defaultdict(lambda: 0)
 
 
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
@@ -13,10 +17,12 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             # Join room group
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
+            online_users[self.user.username] += 1
 
     async def disconnect(self, close_code):
         # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        online_users[self.user.username] -= 1
 
     # Receive message from WebSocket
     async def receive_json(self, content, **kwargs):
