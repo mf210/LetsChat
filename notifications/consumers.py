@@ -19,7 +19,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
             online_users[self.user.username].append(self)
-            # close oldest websocket connections
+            # close this user's oldest websocket connection
             if len(online_users[self.user.username]) > MAX_CONN_FOR_USER:
                 await online_users[self.user.username][0].close()
 
