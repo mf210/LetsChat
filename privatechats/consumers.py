@@ -11,7 +11,7 @@ from .models import PrivateChatRoom, PrivateChatRoomMessage, UnreadPrivateChatMe
 
 
 User = get_user_model()
-online_users = defaultdict(set)
+private_rooms_online_users = defaultdict(list)
 
 
 class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
@@ -24,12 +24,12 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             # Join room group
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
-            online_users[self.room_group_name].add(self.user.username)
+            private_rooms_online_users[self.room_group_name].append(self.user.username)
 
     async def disconnect(self, close_code):
         # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        online_users[self.room_group_name].discard(self.user.username)
+        private_rooms_online_users[self.room_group_name].remove(self.user.username)
 
     # Receive message from WebSocket
     async def receive_json(self, content, **kwargs):
@@ -80,8 +80,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         """
         Increment the number of roommate unread messages if he/she is not in this chat-room
         """
-        # TODO: I think "if len(online_users[self.room_group_name]) == 1" is faster but it's not so readable
-        if self.roommate_name not in online_users[self.room_group_name]:
+        if self.roommate_name not in private_rooms_online_users[self.room_group_name]:
             upcm_obj, created = await UnreadPrivateChatMessages.objects.aget_or_create(
                 user=self.roommate,
                 room=self.pcr_obj,
