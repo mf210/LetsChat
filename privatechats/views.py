@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import PrivateChatRoom, PrivateChatRoomMessage
+from notifications.consumers import online_users
 
 
 
@@ -16,6 +17,8 @@ User = get_user_model()
 class PrivateChatRoomView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         friends = request.user.friendship.friends.all()
+        for friend in friends:
+            friend.status = 'online' if len(online_users[friend.username]) > 0 else 'offline'
         context = {
             'friends': friends,
         }
