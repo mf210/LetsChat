@@ -59,19 +59,15 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                 await self.user.unread_private_messages.filter(id=upcm_id).aupdate(count=0)
             except (UnreadPrivateChatMessages.DoesNotExist, ValueError):
                 pass
-
-    async def send_friends_status(self):
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'general_notification',
-                'command': 'friends_status',
-                'friends_status': { 
-                    friend.username: 'online' if len(online_users[friend.username]) >= 1 else 'offline'
-                    async for friend in self.friends
+        elif command == 'get_friends_list':
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'general_notification',
+                    'command': 'set_friends_list',
+                    'friends': await self.get_friends_list(),
                 }
-            }
-        )
+            )
 
     async def send_your_status_to_friends(self, status):
         async for friend in self.friends:
@@ -93,6 +89,17 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
     async def general_notification(self, event):
         # Send message to WebSocket
         await self.send_json(event)
+    
+    async def get_friends_list(self):
+        friends_list = []
+        async for friend in self.friends:
+            friends_list.append({
+                'status': 'online' if len(online_users[friend.username]) >= 1 else 'offline',
+                'username': friend.username,
+                'profile_url': friend.get_absolute_url(),
+                'profile_image_url': friend.profile_image.url,
+            })
+        return friends_list
 
     @database_sync_to_async
     def friends_list(self):
