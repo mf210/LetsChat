@@ -10,8 +10,9 @@ from .models import PrivateChatRoom, PrivateChatRoomMessage, UnreadPrivateChatMe
 
 
 
+MAX_CONN_PER_ROOM = 2
 User = get_user_model()
-private_rooms_online_users = defaultdict(list)
+private_rooms_online_users = defaultdict(lambda: defaultdict(list))
 
 
 class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
@@ -24,12 +25,15 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             # Join room group
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
-            private_rooms_online_users[self.room_group_name].append(self.user.username)
+            user_conns = private_rooms_online_users[self.room_group_name][self.user.username]
+            user_conns.append(self)
+            if len(user_conns) > MAX_CONN_PER_ROOM:
+                await user_conns[0].close()
 
     async def disconnect(self, close_code):
         # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        private_rooms_online_users[self.room_group_name].remove(self.user.username)
+        private_rooms_online_users[self.room_group_name][self.user.username].remove(self)
 
     # Receive message from WebSocket
     async def receive_json(self, content, **kwargs):
@@ -80,7 +84,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         """
         Increment the number of roommate unread messages if he/she is not in this chat-room
         """
-        if self.roommate_name not in private_rooms_online_users[self.room_group_name]:
+        if len(private_rooms_online_users[self.room_group_name][self.roommate_name]) == 0:
             upcm_obj, created = await UnreadPrivateChatMessages.objects.aget_or_create(
                 user=self.roommate,
                 room=self.pcr_obj,
