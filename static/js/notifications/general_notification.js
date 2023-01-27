@@ -45,7 +45,14 @@ notificationSocket.onmessage = function(e) {
         }
         appendChatNotification(data['notification'], insertDown=false);
     } else if (command === 'update_friend_status'){
-        console.log(data);
+        if (window.location.pathname == '/privatechats/') {
+            newstatusSpan = document.createElement('span');
+            newstatusSpan.classList.add('friend-message-span', data.status);
+            newstatusSpan.innerHTML = data.status;
+            statusDiv = document.getElementById(`friend_${data.friend}_status`);
+            statusDiv.innerHTML = '';
+            statusDiv.appendChild(newstatusSpan);
+        }
     }
 };
 
