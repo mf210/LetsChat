@@ -28,6 +28,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             user_conns = private_rooms_online_users[self.room_group_name][self.user.username]
             user_conns.append(self)
             if len(user_conns) > MAX_CONN_PER_ROOM:
+                # close the user's oldest websocket connection
                 await user_conns[0].close()
 
     async def disconnect(self, close_code):
@@ -65,7 +66,6 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
     async def chat_message(self, event):
         # Send message to WebSocket
         await self.send_json(event)
-
     
     ################### Database Queries ###################
     @database_sync_to_async
