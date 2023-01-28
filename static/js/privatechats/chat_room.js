@@ -29,6 +29,7 @@ function onSelectFriend(username, profileURL) {
     selectedFriendProfileURL = profileURL;
     setupWebSocket(username);
     highlightFriend();
+    handleUnreadMessageCount();
 }
 
 function setupWebSocket(roommate) {
@@ -212,5 +213,16 @@ function clearHighlightedFriend(){
         document.getElementById("id_other_user_profile_image").classList.add("d-none")
         document.getElementById("id_other_user_profile_image").src = ''
         document.getElementById("id_other_username").innerHTML = ""
+    }
+}
+
+// Handle unread chat messages count
+function handleUnreadMessageCount(){
+    const counterSpan = document.getElementById(`${selectedFriendUsername}_unread_msgs_count`);
+    if (counterSpan.innerHTML) {
+        const notificationID = counterSpan.getAttribute('notificationid');
+        // send set unread messages as read command via notification websocket
+        setChatNotificationsAsRead(notificationID);
+        counterSpan.innerHTML = '';
     }
 }

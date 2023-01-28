@@ -424,5 +424,6 @@ function createChatNotificationID(ID) {
 function handleFriendUnreadMessageCounter(notification){
     const friendUsername = notification['sender_username'];
     const counterSpan = document.getElementById(`${friendUsername}_unread_msgs_count`);
+    counterSpan.setAttribute('notificationid', notification.id);
     counterSpan.innerHTML = notification.count;
 }
