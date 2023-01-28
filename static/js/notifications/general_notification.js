@@ -3,6 +3,7 @@ const notificationContainer = document.getElementById("id_general_notifications_
 const generalNotificationsCountElement = document.getElementById("id_general_notifications_count");
 const chatNotificationsCountElement = document.getElementById("id_chat_notifications_count");
 const chatNotificationContainer = document.getElementById("id_chat_notifications_container");
+const isPrivateChatRoom = window.location.pathname == '/privatechats/' ? true : false;
 let canUserLoadGeneralNotifications = true;
 let unreadGeneralNotificationsCount = 0;
 let unreadChatNotificationsCount = 0;
@@ -45,7 +46,7 @@ notificationSocket.onmessage = function(e) {
         }
         appendChatNotification(data['notification'], insertDown=false);
     } else if (command === 'update_friend_status'){
-        if (window.location.pathname == '/privatechats/') {
+        if (isPrivateChatRoom) {
             newstatusSpan = document.createElement('span');
             newstatusSpan.classList.add('friend-message-span', data.status);
             newstatusSpan.innerHTML = data.status;
@@ -142,6 +143,10 @@ function appendChatNotification(notification, insertDown=true){
     }
     unreadChatNotificationsCount += 1;
     setUnreadChatNotificationsCount();
+    // if current locatin is private chat room location then update the count of related friend uread messages
+    if (isPrivateChatRoom) {
+        handleFriendUnreadMessageCounter(notification);
+    };
 }
 
 function createFriendshipElement(notification){
@@ -414,3 +419,10 @@ function createChatNotificationID(ID) {
     return `id_chat_notification_${ID}`
 }
 
+
+// Handle the unread chat message notifications in private chat room friends list
+function handleFriendUnreadMessageCounter(notification){
+    const friendUsername = notification['sender_username'];
+    const counterSpan = document.getElementById(`${friendUsername}_unread_msgs_count`);
+    counterSpan.innerHTML = notification.count;
+}
