@@ -234,14 +234,15 @@ function createChatNotificationCard(){
 }
 
 function createUnreadChatRoomMessagesCard(notification){
-    card = createChatNotificationCard()
-    card.id = createChatNotificationID(notification['id'])
+    const notificationID = notification['id']
+    const card = createChatNotificationCard()
+    card.id = createChatNotificationID(notificationID)
     card.addEventListener("click", function(){
         const friendUsername = notification['sender_username']
         if (isPrivateChatRoom){
             document.getElementById(`id_friend_container_${friendUsername}`).click();
         } else {
-            setChatNotificationsAsRead(notification['id']);
+            setChatNotificationsAsRead(notificationID);
             window.location.href = `/privatechats/?friend_username=${friendUsername}`;
         }
     })
