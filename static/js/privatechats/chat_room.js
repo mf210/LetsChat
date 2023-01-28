@@ -69,7 +69,7 @@ function setupWebSocket(roommate) {
 }
 
 
-document.getElementById('id_chat_message_input').focus();
+// document.getElementById('id_chat_message_input').focus();
 document.getElementById('id_chat_message_input').onkeyup = function(e) {
     if (e.keyCode === 13 && !e.shiftKey) {  // enter
         document.getElementById('id_chat_message_submit').click();
