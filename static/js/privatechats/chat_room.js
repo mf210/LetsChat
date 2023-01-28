@@ -2,6 +2,8 @@
 let chatSocket = null;
 const chatLog = document.getElementById("id_chat_log");
 const spinner = document.getElementById("id_chatroom_loading_spinner");
+const chatMessageInput = document.getElementById("id_chat_message_input");
+const chatSubmitButton = document.getElementById("id_chat_message_submit");
 let canUserLoadChatMessages = true;
 const md = window.markdownit();
 let selectedFriendDiv = null;
@@ -28,6 +30,8 @@ function onSelectFriend(username, profileURL) {
     selectedFriendUsername = username;
     selectedFriendProfileURL = profileURL;
     setupWebSocket(username);
+    chatMessageInput.disabled = false;
+    chatSubmitButton.disabled = false;
     highlightFriend();
     handleUnreadMessageCount();
 }
