@@ -46,7 +46,7 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
                     "username": self.user.username,
                     "profile_image_url": self.user.profile_image.url,
                     "profile_url": self.user.get_absolute_url(),
-                    "msg_timestamp": gcrm_obj.timestamp.ctime(),
+                    "msg_timestamp": gcrm_obj.timestamp.isoformat(),
                     "msg_id": gcrm_obj.id,
                 }
             )

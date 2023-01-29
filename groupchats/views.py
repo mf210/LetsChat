@@ -44,7 +44,7 @@ class GroupChatRoomMessageView(LoginRequiredMixin, View):
                 'username': msg_obj.user.username,
                 'profile_image_url': msg_obj.user.profile_image.url,
                 'profile_url': msg_obj.user.get_absolute_url(),
-                'msg_timestamp': msg_obj.timestamp.ctime(),
+                'msg_timestamp': msg_obj.timestamp.isoformat(),
                 'msg_id': msg_obj.id,
             })
         return HttpResponse(json.dumps(data), content_type="application/json")

@@ -94,7 +94,8 @@ function appendChatMessage(data, insertDown=true){
     div2.appendChild(usernameSpan);
 
     const timestampSpan = document.createElement("span");
-    timestampSpan.innerHTML = msgTimestamp;
+    timestampSpan.setAttribute('isotime', msgTimestamp);
+    timestampSpan.innerHTML = formatDatetime(msgTimestamp);
     timestampSpan.classList.add("timestamp-span");
     timestampSpan.classList.add("d-flex");
     timestampSpan.classList.add("align-items-center");
@@ -115,6 +116,64 @@ function appendChatMessage(data, insertDown=true){
         chatLog.appendChild(newMessageDiv);
     }
 };
+
+/*
+    Format messages date
+*/
+function formatDatetime(isoDatetime){
+    const inputDate = new Date(isoDatetime);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if(inputDate.toDateString() === today.toDateString()){
+        const seconds = (today.getTime() - inputDate.getTime()) / 1000;
+        const s = Math.floor(seconds % 60);
+        const m = Math.floor(seconds % 3600 / 60);
+        const h = Math.floor(seconds / 3600);
+        const hDisplay = h > 0 ? h + (h == 1 ? " hour" : " hours") : "";
+        if(hDisplay){
+            const todayTime = inputDate.toLocaleTimeString(
+                'en-us',
+                {hour: '2-digit', minute: '2-digit'}
+            )
+            return `today at ${todayTime}`;
+        };
+        const mDisplay = m > 0 ? m + (m == 1 ? " minute" : " minutes") : "";
+        if(mDisplay){return `${mDisplay} ago`};
+        const sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+        if(sDisplay){return `${sDisplay} ago`};
+        return 'just now';
+
+    } else if (inputDate.toDateString() === yesterday.toDateString()) {
+        const yesterdayTime = inputDate.toLocaleTimeString(
+            'en-us',
+            {hour: '2-digit', minute: '2-digit'}
+        )
+        return `Yesterday at ${yesterdayTime}`
+
+    } else if(inputDate.getFullYear() === today.getFullYear()){
+        return inputDate.toLocaleDateString(
+            'en-us',
+            {weekday:'long', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}
+        )
+    }
+    
+    return inputDate.toLocaleDateString(
+        'en-us',
+        {year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}
+    )
+}
+
+// Update time of messages repeatedly every 5 seconds
+function updateMessagesTime() {
+    let listItems = document.querySelectorAll('.timestamp-span');
+    listItems = Array.from(listItems);
+    listItems.forEach(item => {
+        item.innerHTML = formatDatetime(item.getAttribute('isotime'));
+    })
+}
+setInterval(updateMessagesTime, 5000);
 
 function showClientErrorModal(message){
     document.getElementById("error-modal-body").innerHTML = message;
