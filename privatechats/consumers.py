@@ -57,7 +57,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                     "username": self.user.username,
                     "profile_image_url": self.user.profile_image.url,
                     "profile_url": self.user.get_absolute_url(),
-                    "msg_timestamp": pcrm_obj.timestamp.ctime(),
+                    "msg_timestamp": pcrm_obj.timestamp.isoformat(),
                     "msg_id": pcrm_obj.id,
                 }
             )
