@@ -331,14 +331,21 @@ function dateTimeToYMWDHMS(datetime) {
     const w = Math.floor(seconds % ((3600*24)*30) / ((3600*24)*7));
     const M = Math.floor(seconds % (((3600*24)*30)*12) / ((3600*24)*30));
     const y = Math.floor(seconds / (((3600*24)*30)*12));
-    const yDisplay = y > 0 ? y + (y == 1 ? " year, ": " years, ") : "";
-    const MDisplay = M > 0 ? M + (M == 1 ? " month, ": " months, ") : "";
-    const wDisplay = w > 0 ? w + (w == 1 ? " week, ": " weeks, ") : "";
-    const dDisplay = d > 0 ? d + (d == 1 ? " day, " : " days, ") : "";
-    const hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
-    const mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+    const yDisplay = y > 0 ? y + (y == 1 ? " year": " years") : "";
+    if (yDisplay){return `${yDisplay} ago`};
+    const MDisplay = M > 0 ? M + (M == 1 ? " month": " months") : "";
+    if (MDisplay){return `${MDisplay} ago`};
+    const wDisplay = w > 0 ? w + (w == 1 ? " week": " weeks") : "";
+    if (wDisplay){return `${wDisplay} ago`};
+    const dDisplay = d > 0 ? d + (d == 1 ? " day" : " days") : "";
+    if (dDisplay){return `${dDisplay} ago`};
+    const hDisplay = h > 0 ? h + (h == 1 ? " hour" : " hours") : "";
+    if (hDisplay){return `${hDisplay} ago`};
+    const mDisplay = m > 0 ? m + (m == 1 ? " minute" : " minutes") : "";
+    if (mDisplay){return `${mDisplay} ago`};
     const sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-    return yDisplay + MDisplay + wDisplay + dDisplay + hDisplay + mDisplay + sDisplay;
+    return `${sDisplay} ago`;
+    // return yDisplay + MDisplay + wDisplay + dDisplay + hDisplay + mDisplay + sDisplay;
 }
 
 /*
