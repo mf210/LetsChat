@@ -165,12 +165,18 @@ function formatDatetime(isoDatetime){
         const s = Math.floor(seconds % 60);
         const m = Math.floor(seconds % 3600 / 60);
         const h = Math.floor(seconds / 3600);
-        const hDisplay = h > 0 ? h + (h == 1 ? " hour " : " hours ") : "";
-        const mDisplay = m > 0 ? m + (m == 1 ? " minute " : " minutes ") : "";
-        const sDisplay = s > 0 ? s + (s == 1 ? " second " : " seconds ") : "";
-        if(hDisplay || mDisplay || sDisplay){
-            return hDisplay + mDisplay + sDisplay + 'ago';
-        }
+        const hDisplay = h > 0 ? h + (h == 1 ? " hour" : " hours") : "";
+        if(hDisplay){
+            const todayTime = inputDate.toLocaleTimeString(
+                'en-us',
+                {hour: '2-digit', minute: '2-digit'}
+            )
+            return `today at ${todayTime}`;
+        };
+        const mDisplay = m > 0 ? m + (m == 1 ? " minute" : " minutes") : "";
+        if(mDisplay){return `${mDisplay} ago`};
+        const sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+        if(sDisplay){return `${sDisplay} ago`};
         return 'just now';
 
     } else if (inputDate.toDateString() === yesterday.toDateString()) {
