@@ -43,6 +43,7 @@ notificationSocket.onmessage = function(e) {
         const chatNotificationCard = document.getElementById(chatNotificationID);
         if (chatNotificationCard) {
             chatNotificationCard.remove();
+            unreadChatNotificationsCount -= 1;
         }
         appendChatNotification(data['notification'], insertDown=false);
     } else if (command === 'update_friend_status'){
