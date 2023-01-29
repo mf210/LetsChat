@@ -7,7 +7,8 @@ from .models import GroupChatRoom, GroupChatRoomMessage
 
 
 
-online_users = defaultdict(set)
+MAX_CONN_PER_ROOM = 2
+group_rooms_online_users = defaultdict(lambda: defaultdict(list))
 
 
 class GroupChatConsumer(AsyncJsonWebsocketConsumer):
@@ -22,14 +23,24 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
             # Join room group
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
-            online_users[self.room_group_name].add(self.user.username)
-            await self.send_room_online_users_count_for_group()
+            user_conns = group_rooms_online_users[self.room_group_name][self.user.username]
+            user_conns.append(self)
+            if len(user_conns) == 1:
+                # send count of online users in room if the user connected for first time 
+                await self.send_room_online_users_count_for_group()
+            if len(user_conns) > MAX_CONN_PER_ROOM:
+                # close the user's oldest websocket connection
+                await user_conns[0].close()
 
     async def disconnect(self, close_code):
         # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        online_users[self.room_group_name].discard(self.user.username)
-        await self.send_room_online_users_count_for_group()
+        user_conns = group_rooms_online_users[self.room_group_name][self.user.username]
+        user_conns.remove(self)
+        if len(user_conns) == 0:
+            # update and send count of online users in room if the user has no connection
+            del group_rooms_online_users[self.room_group_name][self.user.username]
+            await self.send_room_online_users_count_for_group()
 
     # Receive message from WebSocket
     async def receive_json(self, content, **kwargs):
@@ -56,7 +67,7 @@ class GroupChatConsumer(AsyncJsonWebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'room_online_users_count',
-                'room_online_users_count': len(online_users[self.room_group_name]),
+                'room_online_users_count': len(group_rooms_online_users[self.room_group_name]),
             }
         )
     
