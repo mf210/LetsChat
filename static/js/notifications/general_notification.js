@@ -53,8 +53,8 @@ notificationSocket.onmessage = function(e) {
             newstatusSpan.classList.add('friend-message-span', data.status);
             newstatusSpan.innerHTML = data.status;
             statusDiv = document.getElementById(`friend_${data.friend}_status`);
-            statusDiv.innerHTML = '';
-            statusDiv.appendChild(newstatusSpan);
+            statusDiv.replaceChild(newstatusSpan, statusDiv.firstChild)
+            // statusDiv.appendChild(newstatusSpan);
         }
     }
 };
@@ -145,9 +145,9 @@ function appendChatNotification(notification, insertDown=true){
     }
     unreadChatNotificationsCount += 1;
     setUnreadChatNotificationsCount();
-    // if current locatin is private chat room location then update the count of related friend uread messages
     if (isPrivateChatRoom) {
-        handleFriendUnreadMessageCounter(notification);
+        // update the last message and uread messages count of related friend 
+        updateFriendUnreadMessagesNotif(notification);
     };
 }
 
@@ -436,10 +436,18 @@ function createChatNotificationID(ID) {
 }
 
 
-// Handle the unread chat message notifications in private chat room friends list
-function handleFriendUnreadMessageCounter(notification){
+// Update the unread chat message notifications in private chat room friends list
+function updateFriendUnreadMessagesNotif(notification){
+    // update count of unread messages
     const friendUsername = notification['sender_username'];
     const counterSpan = document.getElementById(`${friendUsername}_unread_msgs_count`);
     counterSpan.setAttribute('notificationid', notification.id);
     counterSpan.innerHTML = notification.count;
+    // update user last message
+    const friendLastMsg = document.getElementById(`${friendUsername}_last_message_span`);
+    if(notification['most_recent_message'].length > 25){
+        friendLastMsg.innerHTML = notification['most_recent_message'].slice(0, 25) + "..."
+    } else {
+        friendLastMsg.innerHTML = notification['most_recent_message']
+    }
 }

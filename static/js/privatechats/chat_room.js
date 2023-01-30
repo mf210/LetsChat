@@ -287,5 +287,6 @@ function handleUnreadMessageCount(){
         // send set unread messages as read command via notification websocket
         setChatNotificationsAsRead(notificationID);
         counterSpan.innerHTML = '';
+        document.getElementById(`${selectedFriendUsername}_last_message_span`).innerHTML = '';
     }
 }

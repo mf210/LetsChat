@@ -20,10 +20,8 @@
 						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="onSelectFriend('{{friend.username}}', `{% url 'accounts:profile' username=friend.username %}`)" id="id_friend_container_{{friend.username}}">
 							<img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{ friend.username }}" src="{{ friend.profile_image.url }}" >
 							<div class="d-flex flex-column">
-								<span class="username-span">{{ friend.username }}<span id="{{ friend.username }}_unread_msgs_count" class="badge bg-danger float-right" style="color: white;"></span></span>
-								<div id="friend_{{ friend.username }}_status">
-									<span class="friend-message-span {{ friend.status }}">{{ friend.status }}</span>
-								</div>
+								<span class="username-span">{{ friend.username }}<span id="{{ friend.username }}_unread_msgs_count" class="badge bg-danger ml-3" style="color: white;"></span></span>
+								<div id="friend_{{ friend.username }}_status"><span class="friend-message-span {{ friend.status }}">{{ friend.status }}</span><span id="{{ friend.username }}_last_message_span" class="friend-last-message-span"></span></div>
 							</div>
 						</div>
 						{% endfor %}
