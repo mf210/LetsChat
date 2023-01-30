@@ -31,6 +31,7 @@ notificationSocket.onmessage = function(e) {
         appendGeneralNotification(data['notification'], insertDown=false);
     } else if (command === 'set_unread_general_notifications_count') {
         unreadGeneralNotificationsCount = data['count']
+        setUnreadGeneralNotificationsCount();
     } else if (command === 'remove_friendrequest_notification') {
         unreadGeneralNotificationsCount -= unreadGeneralNotificationsCount > 0 ? 1 : 0;
         setUnreadGeneralNotificationsCount();
@@ -60,7 +61,7 @@ notificationSocket.onmessage = function(e) {
 
 notificationSocket.onopen = function(e) {
     notificationSocket.send(JSON.stringify({
-        'command': 'get_unread_general_notifications_count'
+        command: 'get_unread_general_notifications_count'
     }))    
 };
 
