@@ -8,6 +8,30 @@
 {% block content %}
 <div class="container">
 	<div class="row">
+		
+		<div class="col-sm-3 m-0 p-2">
+			<div class="card">
+				<div class="d-flex flex-row align-items-center card-header">
+					<h3 >Friends</h3>
+				</div>
+				<div class="card-body p-1">	
+					<div class="d-flex flex-column friends-list-container ">
+						{% for friend in friends %}
+						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="onSelectFriend('{{friend.username}}', `{% url 'accounts:profile' username=friend.username %}`)" id="id_friend_container_{{friend.username}}">
+							<img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{ friend.username }}" src="{{ friend.profile_image.url }}" >
+							<div class="d-flex flex-column">
+								<span class="username-span">{{ friend.username }}<span id="{{ friend.username }}_unread_msgs_count" class="badge bg-danger float-right" style="color: white;"></span></span>
+								<div id="friend_{{ friend.username }}_status">
+									<span class="friend-message-span {{ friend.status }}">{{ friend.status }}</span>
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div class="col-sm-9 m-0 p-2">
 			<div class="card" id="id_chatroom_card">
 				<div class="d-flex flex-row align-items-center card-header" id="id_room_title">
@@ -35,28 +59,6 @@
 			</div>
 		</div>
 
-		<div class="col-sm-3 m-0 p-2">
-			<div class="card">
-				<div class="d-flex flex-row align-items-center card-header">
-					<h3 >Friends</h3>
-				</div>
-				<div class="card-body p-1">	
-					<div class="d-flex flex-column friends-list-container ">
-						{% for friend in friends %}
-						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="onSelectFriend('{{friend.username}}', `{% url 'accounts:profile' username=friend.username %}`)" id="id_friend_container_{{friend.username}}">
-							<img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{ friend.username }}" src="{{ friend.profile_image.url }}" >
-							<div class="d-flex flex-column">
-								<span class="username-span">{{ friend.username }}<span id="{{ friend.username }}_unread_msgs_count" class="badge bg-danger float-right" style="color: white;"></span></span>
-								<div id="friend_{{ friend.username }}_status">
-									<span class="friend-message-span {{ friend.status }}">{{ friend.status }}</span>
-								</div>
-							</div>
-						</div>
-						{% endfor %}
-					</div>
-				</div>
-			</div>
-		</div>
 	</div>
 </div>
 
