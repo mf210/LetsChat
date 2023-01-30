@@ -65,3 +65,7 @@ function unfriend(url, pk){
         console.error(error);
     });
 }
+
+function redirectUser(url){
+    window.location.href = url;
+}
