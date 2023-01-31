@@ -39,7 +39,7 @@ def create_group_chat_room_messages(django_user_model):
         'username': user1.username,
         'profile_image_url': user1.profile_image.url,
         'profile_url': user1.get_absolute_url(),
-        'msg_timestamp': pcrm_1.timestamp.ctime(),
+        'msg_timestamp': pcrm_1.timestamp.isoformat(),
         'msg_id': pcrm_1.id,
     }
     pcrm_2 = PrivateChatRoomMessage.objects.create(
@@ -52,7 +52,7 @@ def create_group_chat_room_messages(django_user_model):
         'username': user2.username,
         'profile_image_url': user2.profile_image.url,
         'profile_url': user2.get_absolute_url(),
-        'msg_timestamp': pcrm_2.timestamp.ctime(),
+        'msg_timestamp': pcrm_2.timestamp.isoformat(),
         'msg_id': pcrm_2.id,
     }
     return user1, user2, pcrm_1_dict, pcrm_2_dict
