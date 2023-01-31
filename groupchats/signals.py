@@ -12,8 +12,12 @@ User = get_user_model()
 
 
 
-if not (('/usr/local/bin/pytest' in sys.argv) or ('test' in sys.argv)):
-    @receiver(post_save, sender=User)
-    def add_user_to_public_group_chat_room(sender, instance, created, **kwargs):
-        if created:
-            GroupChatRoom.objects.get(name='public').users.add(instance)
+# if not (('/usr/local/bin/pytest' in sys.argv) or ('test' in sys.argv)):
+@receiver(post_save, sender=User)
+def add_user_to_public_group_chat_room(sender, instance, created, **kwargs):
+    if created:
+        gcr_obj, _ = GroupChatRoom.objects.get_or_create(
+            name='public',
+            defaults={'owner': instance}
+        )
+        gcr_obj.users.add(instance)
