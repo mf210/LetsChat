@@ -51,7 +51,7 @@ After running the docker containers, enter the following command in your termina
 
     docker container exec -it letschat-web-1 pytest
 
-## What did I used in this project
+## What did I use in this project
 ### Backend:
 - Postgresql
 - Redis
