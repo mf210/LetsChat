@@ -47,13 +47,9 @@ then enter username, password and ... for creating a super user.
 
 
 ## Run Tests
-After running docker containers enter below command in your terminal to connect to the web container's bash:
+After running the docker containers, enter the following command in your terminal:
 
-    docker container exec -it letschat-web-1 bash
-
-Then run test with:
-
-    pytest
+    docker container exec -it letschat-web-1 pytest
 
 ## What did I used in this project
 ### Backend:
