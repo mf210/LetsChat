@@ -1,6 +1,7 @@
 # Let's Chat
 "Let's Chat" is a real-time chat website.
 
+![Let's Chat](https://github.com/mf210/letschat/blob/main/prod_pics/all.gif)
 
 ## Some of The "Let's Chat" Features:
 - Login with third-party (Google or GitHub) account
@@ -32,7 +33,7 @@ Run project containers with Docker Compose by entering this command in your term
 
 > **_NOTE:_** if you want to see logs then remove "-d" flag.
 
-Now that the server’s running, visit http://127.0.0.1:8000/ or localhost:8000 with your web browser. You’ll see index page of "let's Chat".
+Now that the server’s running, visit http://127.0.0.1:8000/ or http://localhost:8000/ with your web browser. You’ll see index page of "let's Chat".
 
 But before doing anything else you should create a super user. So first connect to the django or web container's bash:
 
