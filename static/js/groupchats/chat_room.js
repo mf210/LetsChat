@@ -2,11 +2,11 @@
 const roomName = JSON.parse(document.getElementById('room-name').textContent);
 const chatLog = document.getElementById("id-chat-log");
 const spinner = document.getElementById("id-chatroom-loading-spinner");
-let canUserLoadChatMessages = true;
 const md = window.markdownit();
+let canUserLoadChatMessages = true;
 
 const chatSocket = new WebSocket(
-    'ws://'
+    window.location.protocol === 'https:' ? 'wss://' : 'ws://'
     + window.location.host
     + '/ws/groupchat/'
     + roomName

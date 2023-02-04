@@ -17,7 +17,7 @@ function getCookie(name) {
 
 // WebSockets
 const notificationSocket = new WebSocket(
-    'ws://'
+    window.location.protocol === 'https:' ? 'wss://' : 'ws://'
     + window.location.host
     + '/ws/notification/'
 );

@@ -4,8 +4,8 @@ const chatLog = document.getElementById("id_chat_log");
 const spinner = document.getElementById("id_chatroom_loading_spinner");
 const chatMessageInput = document.getElementById("id_chat_message_input");
 const chatSubmitButton = document.getElementById("id_chat_message_submit");
-let canUserLoadChatMessages = true;
 const md = window.markdownit();
+let canUserLoadChatMessages = true;
 let selectedFriendDiv = null;
 let selectedFriendUsername = null;
 let selectedFriendProfileURL = null;
@@ -38,7 +38,7 @@ function onSelectFriend(username, profileURL) {
 
 function setupWebSocket(roommate) {
     chatSocket = new WebSocket(
-        'ws://'
+        window.location.protocol === 'https:' ? 'wss://' : 'ws://'
         + window.location.host
         + '/ws/privatechat/'
         + roommate
