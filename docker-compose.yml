@@ -9,6 +9,19 @@ services:
     ports:
       - "8000:8000"
     restart: always
+    environment:
+      - "DJANGO_DEBUG=true"
+      - "DJANGO_SECRET_KEY=django-insecure-iqc69%_m_wujxb6uogjl8x8!wb4o%1_kcm5&-ott31*+jx2gkm"
+      - "DJANGO_SECURE_SSL_REDIRECT=false"
+      - "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS=false"
+      - "DJANGO_SECURE_HSTS_PRELOAD=false"
+      - "DJANGO_SECURE_HSTS_SECONDS=0"
+      - "DJANGO_SESSION_COOKIE_SECURE=false"
+      - "DJANGO_CSRF_COOKIE_SECURE=false"
+      - "HOST_NAME=localhost"
+      - "DATABASE_URL=postgres://postgres@db/postgres"
+      - "EMAIL_HOST_USER=email"
+      - "EMAIL_HOST_PASSWORD=emailpass"
     depends_on:
       - db
       - redis
